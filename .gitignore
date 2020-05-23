@@ -1,0 +1,10 @@
+# Built files
+build/
+
+# Audio files
+*.flac
+*.m4a
+*.mp3
+*.oga
+*.ogg
+*.opus
