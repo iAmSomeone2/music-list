@@ -15,6 +15,11 @@ using std::map;
 
 namespace MusicList
 {
+    static const char* SUPPORTED_EXTS[] = {
+        ".flac", ".opus", ".ogg", ".oga", ".mp3", ".m4a"
+    };
+    static const uint_fast8_t NUM_EXTS = 6;
+
     struct unsupported_format_error : public std::exception
     {
         fs::path errPath;
@@ -109,7 +114,7 @@ namespace MusicList
         /**
          * @brief Creates a new Track instance using the provided path.
          * 
-         * Only the path variable is populated using this constructor. Other variables must be set or calculated as usual.
+         * Track metadata is parsed at instance creation and can be immediately accessed.
          * 
          * @param path filesystem path to the track to use.
          */
@@ -214,6 +219,8 @@ namespace MusicList
          */
         const fs::path& getPath() const;
 
+        const string& getMBID() const;
+
         // ==================
         // Operator Overloads
         // ==================
@@ -228,7 +235,7 @@ namespace MusicList
          */
         friend inline bool operator< (const Track& lhs, const Track& rhs)
         {
-            return std::tie(lhs.trackNum, lhs.discNum, lhs.mbid) < std::tie(rhs.trackNum, rhs.discNum, rhs.mbid);
+            return std::tie(lhs.mbid) < std::tie(rhs.mbid);
         }
 
         friend inline bool operator> (const Track& lhs, const Track& rhs) { return rhs < lhs;}

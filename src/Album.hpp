@@ -50,6 +50,8 @@ namespace MusicList
 
         const uint_fast8_t& getTotalTracks() const;
 
+        const string& getMBID() const;
+
         // ==================
         // Operator Overloads
         // ==================

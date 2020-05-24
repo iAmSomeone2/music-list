@@ -384,3 +384,8 @@ const fs::path& Track::getPath() const
 {
     return this->path;
 }
+
+const string& Track::getMBID() const
+{
+    return this->mbid;
+}

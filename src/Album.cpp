@@ -67,3 +67,8 @@ const uint_fast8_t& Album::getTotalTracks() const
 {
     return this->totalTracks;
 }
+
+const string& Album::getMBID() const
+{
+    return this->mbid;
+}
