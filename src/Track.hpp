@@ -31,7 +31,8 @@ namespace MusicList
         {
             string outStr = "Unsupported audio format. File: ";
             outStr.append(errPath.string());
-            return outStr.c_str();
+            const char* cStr = outStr.c_str();
+            return cStr;
         }
     };
 

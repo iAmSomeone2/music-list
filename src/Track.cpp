@@ -23,11 +23,18 @@ Track::Track()
 
 Track::Track(const fs::path& path)
 {
-    this->setPath(path);
-    this->readMetadata();
+    try
+    {
+        this->setPath(path);
+        this->readMetadata();
+    }
+    catch(const unsupported_format_error& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
-inline void Track::setPath(const fs::path& path)
+void Track::setPath(const fs::path& path)
 {
     this->path = path;
     try
@@ -36,7 +43,8 @@ inline void Track::setPath(const fs::path& path)
     }
     catch (const unsupported_format_error& err)
     {
-        std::cerr << err.what() << "\n";
+        // std::cerr << err.what() << "\n";
+        throw err;
     } 
 
     switch (this->format)

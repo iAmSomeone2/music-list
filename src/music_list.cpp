@@ -48,7 +48,30 @@ void runAlbumSearch(const fs::path& path, map<string,Album>& albums)
     for (totalProcessed = 0; totalProcessed < totalTracks; totalProcessed++)
     {
         fs::path trackPath = trackPaths[totalProcessed];
-        Track track = Track(trackPath);
+        
+        Track track = Track();
+
+        try
+        {
+            track.setPath(trackPath);
+        } 
+        catch(const unsupported_format_error& err)
+        {
+            std::cerr << err.what() << std::endl;
+            continue;
+        }
+
+        try
+        {
+            track.readMetadata();
+        }
+        catch(const unsupported_format_error& err)
+        {
+            std::cerr << err.what() << std::endl;
+            continue;
+        }
+        
+
         string trackMBID = track.getMBID();
         map<string,string> trackTags = track.getTags();
         string albumMBID = trackTags["MUSICBRAINZ_ALBUMID"];
