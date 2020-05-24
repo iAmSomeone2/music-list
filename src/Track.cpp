@@ -23,6 +23,7 @@ Track::Track()
 Track::Track(const fs::path& path)
 {
     this->setPath(path);
+    this->readMetadata();
 }
 
 inline void Track::setPath(const fs::path& path)
@@ -366,4 +367,9 @@ const uint_fast8_t& Track::getDiscNum() const
 const uint_fast8_t& Track::getTotalDiscs() const
 {
     return this->totalDiscs;
+}
+
+const AudioFormat& Track::getAudioFormat() const
+{
+    return this->format;
 }

@@ -1,5 +1,6 @@
 # Built files
 build/
+builddir/
 
 # Audio files
 *.flac

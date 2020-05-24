@@ -27,6 +27,11 @@ const Json::Value Album::toJSON() const
 
 bool Album::addTrack(const Track& track)
 {
+    if (track.getAudioFormat() == AudioFormat::unknown)
+    {
+        throw unsupported_format_error();
+    }
+
     if (this->tracks.empty())
     {
         // Initialize basic data since this is the first track to be added.

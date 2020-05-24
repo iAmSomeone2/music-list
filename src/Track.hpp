@@ -199,6 +199,11 @@ namespace MusicList
          */
         const uint_fast8_t& getTotalDiscs() const;
 
+        /**
+         * @returns AudioFormat associated with the Track;
+         */
+        const AudioFormat& getAudioFormat() const;
+
         // ==================
         // Operator Overloads
         // ==================

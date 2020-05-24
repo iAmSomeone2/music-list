@@ -52,7 +52,6 @@ TEST_F(AlbumTest, FullAlbum)
             Track newTrack = Track(item);
             try
             {
-                newTrack.readMetadata();
                 album.addTrack(newTrack);
             }
             catch (const unsupported_format_error &err)
@@ -73,7 +72,6 @@ TEST_F(AlbumTest, GenerateJSON)
             Track newTrack = Track(item);
             try
             {
-                newTrack.readMetadata();
                 album.addTrack(newTrack);
             }
             catch (const unsupported_format_error &err)
