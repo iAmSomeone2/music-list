@@ -9,3 +9,7 @@ builddir/
 *.oga
 *.ogg
 *.opus
+
+# Resource files
+res/**/*
+! res/**/README.md

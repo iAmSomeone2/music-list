@@ -1,13 +1,18 @@
-track_srcs = ['Track.cpp', 'Track.hpp']
+# Music Data Library
+
+music_data_srcs = ['Track.cpp', 'Track.hpp', 'Album.cpp', 'Album.hpp']
 
 flac = dependency('flac', required: true)
 vorbis = dependency('vorbis', required: true)
 
-lib_track = static_library('track', track_srcs,
-        dependencies: [flac, vorbis, jsoncpp])
+lib_music_data = static_library('musicdata', music_data_srcs,
+        dependencies: [flac, vorbis, jsoncpp]
+)
 
-album_srcs = ['Album.cpp', 'Album.hpp']
+# Main executable
 
-lib_album = static_library('album', album_srcs,
+music_list = executable('musiclist', ['music_list.cpp'],
         dependencies: [jsoncpp],
-        link_with: [lib_track])
+        include_directories: [proj_include],
+        link_with: [lib_music_data]
+)

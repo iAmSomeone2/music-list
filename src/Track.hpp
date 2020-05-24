@@ -5,7 +5,6 @@
 #include <string>
 #include <map>
 #include <cinttypes>
-#include <memory>
 
 #include <json/value.h>
 
@@ -13,16 +12,21 @@ namespace fs = std::filesystem;
 
 using std::string;
 using std::map;
-using std::unique_ptr;
-using std::shared_ptr;
 
 namespace MusicList
 {
     struct unsupported_format_error : public std::exception
     {
+        fs::path errPath;
+        unsupported_format_error(const fs::path& filePath)
+        {
+            this->errPath = filePath;
+        }
         const char* what() const throw()
         {
-            return "Unsupported audio format.";
+            string outStr = "Unsupported audio format. File: ";
+            outStr.append(errPath.string());
+            return outStr.c_str();
         }
     };
 
@@ -92,6 +96,7 @@ namespace MusicList
         string title = "";
         string artist = "";
         string album = "";
+        string mbid = "";
         map<string,string> tags;
     public:
         /**
@@ -204,6 +209,11 @@ namespace MusicList
          */
         const AudioFormat& getAudioFormat() const;
 
+        /**
+         * @returns Filesystem path associated with the Track
+         */
+        const fs::path& getPath() const;
+
         // ==================
         // Operator Overloads
         // ==================
@@ -218,7 +228,7 @@ namespace MusicList
          */
         friend inline bool operator< (const Track& lhs, const Track& rhs)
         {
-            return std::tie(lhs.trackNum, lhs.discNum) < std::tie(rhs.trackNum, rhs.discNum);
+            return std::tie(lhs.trackNum, lhs.discNum, lhs.mbid) < std::tie(rhs.trackNum, rhs.discNum, rhs.mbid);
         }
 
         friend inline bool operator> (const Track& lhs, const Track& rhs) { return rhs < lhs;}

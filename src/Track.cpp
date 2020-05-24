@@ -1,5 +1,5 @@
 #include <fstream>
-
+#include <memory>
 #include <cstring>
 #include <iostream>
 
@@ -10,6 +10,7 @@
 
 using namespace MusicList;
 
+using std::unique_ptr;
 
 // ===============
 // Instance Set Up
@@ -142,7 +143,7 @@ void Track::readMetadata()
             this->readOpusMetadata();
             break;
         default:
-            throw unsupported_format_error();
+            throw unsupported_format_error(this->path);
     }
 }
 
@@ -169,6 +170,10 @@ void Track::addMetadataPair(const string& key, const string& value)
         else if (tmpKey == "TOTALDISCS")
         {
             this->totalDiscs = strtoul(value.c_str(), nullptr, 10);
+        }
+        else if (tmpKey == "MUSICBRAINZ_TRACKID")
+        {
+            this->mbid = value;
         }
         
         this->tags[tmpKey] = value;
@@ -289,6 +294,7 @@ const Json::Value Track::toJSON() const
     root["artist"] = this->artist;
     root["album"] = this->album;
     root["is_lossless"] = this->isLossless;
+    root["musicbrainz_id"] = this->mbid;
     
     string formatStr;
     switch (this->format)
@@ -372,4 +378,9 @@ const uint_fast8_t& Track::getTotalDiscs() const
 const AudioFormat& Track::getAudioFormat() const
 {
     return this->format;
+}
+
+const fs::path& Track::getPath() const 
+{
+    return this->path;
 }

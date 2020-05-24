@@ -18,6 +18,7 @@ namespace MusicList
     private:
         string name;
         string artist;
+        string mbid;
         set<Track> tracks;
         uint_fast8_t totalTracks;
     public:

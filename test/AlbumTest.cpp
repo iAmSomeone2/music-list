@@ -49,9 +49,9 @@ TEST_F(AlbumTest, FullAlbum)
     {
         if (fs::is_regular_file(item))
         {
-            Track newTrack = Track(item);
             try
             {
+                Track newTrack = Track(item);
                 album.addTrack(newTrack);
             }
             catch (const unsupported_format_error &err)
@@ -69,9 +69,9 @@ TEST_F(AlbumTest, GenerateJSON)
     {
         if (fs::is_regular_file(item))
         {
-            Track newTrack = Track(item);
             try
             {
+                Track newTrack = Track(item);
                 album.addTrack(newTrack);
             }
             catch (const unsupported_format_error &err)

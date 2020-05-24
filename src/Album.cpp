@@ -16,6 +16,7 @@ const Json::Value Album::toJSON() const
     root["name"] = this->name;
     root["artist"] = this->artist;
     root["total_tracks"] = this->totalTracks;
+    root["musicbrainz_id"] = this->mbid;
     root["tracks"] = Json::Value();
     for (const auto& track : this->tracks)
     {
@@ -29,7 +30,7 @@ bool Album::addTrack(const Track& track)
 {
     if (track.getAudioFormat() == AudioFormat::unknown)
     {
-        throw unsupported_format_error();
+        throw unsupported_format_error(track.getPath());
     }
 
     if (this->tracks.empty())
@@ -38,6 +39,8 @@ bool Album::addTrack(const Track& track)
         this->totalTracks = track.getTotalTracks();
         this->name = track.getAlbum();
         this->artist = track.getArtist();
+        map<string,string> trackTags = track.getTags();
+        this->mbid = trackTags["MUSICBRAINZ_ALBUMID"];
     }
 
     auto result = this->tracks.insert(track);
