@@ -7,6 +7,8 @@
 #include <cinttypes>
 #include <memory>
 
+#include <json/value.h>
+
 namespace fs = std::filesystem;
 
 using std::string;
@@ -27,7 +29,7 @@ namespace MusicList
     /**
      * Possbile track formats.
      */
-    enum class AudioFormat
+    enum class AudioFormat 
     {
         flac,
         ogg_flac,
@@ -43,7 +45,7 @@ namespace MusicList
     private:
         // Data info
         fs::path path;
-        AudioFormat format = AudioFormat::unknown;
+        AudioFormat format = AudioFormat();
 
         // ==================
         // Metadata Retrieval
@@ -135,6 +137,15 @@ namespace MusicList
          */
         static AudioFormat determineFormat(const fs::path& path);
 
+        // ==========
+        // Operations
+        // ==========
+
+        /**
+         * @brief Creates a JSON value containing the object's data.
+         */
+        const Json::Value toJSON() const;
+
         /**
          * @brief Converts the first 4 bytes in the input array into an unsigned 32-bit int.
          * 
@@ -151,42 +162,42 @@ namespace MusicList
         /**
          * @returns a const reference to the complete tag map for this Track instance.
          */
-        const map<string,string>& getTags();
+        const map<string,string>& getTags() const;
 
         /**
          * @returns Track title.
          */
-        const string& getTitle();
+        const string& getTitle() const;
 
         /**
          * @returns Track artist.
          */
-        const string& getArtist();
+        const string& getArtist() const;
 
         /**
          * @returns Track album.
          */
-        const string& getAlbum();
+        const string& getAlbum() const;
 
         /**
          * @returns Track index in album.
          */
-        const uint_fast8_t& getTrackNum();
+        const uint_fast8_t& getTrackNum() const;
 
         /**
          * @returns total number of Tracks in album or collection.
          */
-        const uint_fast8_t& getTotalTracks();
+        const uint_fast8_t& getTotalTracks() const;
 
         /**
          * @returns index of associated disc in collection or album.
          */
-        const uint_fast8_t& getDiscNum();
+        const uint_fast8_t& getDiscNum() const;
 
         /**
          * @returns total number of discs in collection or album.
          */
-        const uint_fast8_t& getTotalDiscs();
+        const uint_fast8_t& getTotalDiscs() const;
 
         // ==================
         // Operator Overloads

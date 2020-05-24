@@ -10,6 +10,7 @@
 
 using namespace MusicList;
 
+
 // ===============
 // Instance Set Up
 // ===============
@@ -238,6 +239,11 @@ void Track::readOpusMetadata()
         trackStream.readsome(buff, 4);
         uint_fast32_t entryLen = Track::toUInt32(buff);
 
+        if (entryLen >= UINT32_MAX)
+        {
+            entryLen = 1024000; // 1MiB
+        }
+
         buff = static_cast<char*>(realloc(buff, sizeof(char) * (entryLen + 1)));
         buff[entryLen] = 0;
 
@@ -247,6 +253,12 @@ void Track::readOpusMetadata()
         auto splitLoc = entry.find('=');
         
         string key = entry.substr(0, splitLoc);
+        if (key == "METADATA_BLOCK_PICTURE")
+        {
+            // TODO: Figure out the correct way to deal with the picture.
+            // The picture should not be stored in the tags list.
+            continue;
+        }
         string value = entry.substr(splitLoc+1);
 
         this->addMetadataPair(key, value);
@@ -260,6 +272,53 @@ void Track::readOpusMetadata()
     this->title = this->tags["TITLE"];
 }
 
+// ==========
+// Operations
+// ==========
+
+const Json::Value Track::toJSON() const
+{
+    Json::Value root;
+
+    root["track_num"] = this->trackNum;
+    root["total_tracks"] = this->totalTracks;
+    root["disc_num"] = this->discNum;
+    root["total_discs"] = this->totalDiscs;
+    root["title"] = this->title;
+    root["artist"] = this->artist;
+    root["album"] = this->album;
+    root["is_lossless"] = this->isLossless;
+    
+    string formatStr;
+    switch (this->format)
+    {
+        case AudioFormat::aac:
+            formatStr = "AAC";
+            break;
+        case AudioFormat::flac:
+            formatStr = "FLAC";
+            break;
+        case AudioFormat::mp3:
+            formatStr = "MP3";
+            break;
+        case AudioFormat::ogg_flac:
+            formatStr = "FLAC";
+            break;
+        case AudioFormat::opus:
+            formatStr = "Opus";
+            break;
+        case AudioFormat::vorbis:
+            formatStr = "Vorbis";
+            break;
+        default:
+            formatStr = "unkown";
+    }
+
+    root["format"] = formatStr;
+
+    return root;
+}
+
 inline uint_fast32_t Track::toUInt32(const char* bytes)
 {
     return (bytes[3] << 24) | (bytes[2] << 16) | (bytes[1] << 8) | bytes[0];
@@ -269,42 +328,42 @@ inline uint_fast32_t Track::toUInt32(const char* bytes)
 // Getters
 // =======
 
-const map<string,string>& Track::getTags()
+const map<string,string>& Track::getTags() const
 {
     return this->tags;
 }
 
-const string& Track::getTitle()
+const string& Track::getTitle() const
 {
     return this->title;
 }
 
-const string& Track::getArtist()
+const string& Track::getArtist() const
 {
     return this->artist;
 }
 
-const string& Track::getAlbum()
+const string& Track::getAlbum() const
 {
     return this->album;
 }
 
-const uint_fast8_t& Track::getTrackNum()
+const uint_fast8_t& Track::getTrackNum() const
 {
     return this->trackNum;
 }
 
-const uint_fast8_t& Track::getTotalTracks()
+const uint_fast8_t& Track::getTotalTracks() const
 {
     return this->totalTracks;
 }
 
-const uint_fast8_t& Track::getDiscNum()
+const uint_fast8_t& Track::getDiscNum() const
 {
     return this->discNum;
 }
 
-const uint_fast8_t& Track::getTotalDiscs()
+const uint_fast8_t& Track::getTotalDiscs() const
 {
     return this->totalDiscs;
 }

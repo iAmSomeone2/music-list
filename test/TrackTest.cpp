@@ -1,8 +1,12 @@
 #include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <memory>
 
 #include <Track.hpp>
 
 #include <gtest/gtest.h>
+#include <json/json.h>
 
 using namespace MusicList;
 
@@ -77,6 +81,32 @@ TEST_F(TrackTest, ImportOpusMetadata)
     ASSERT_EQ(13, opusTrack.getTotalTracks());
     ASSERT_EQ(1, opusTrack.getDiscNum());
     ASSERT_EQ(1, opusTrack.getTotalDiscs());
+}
+
+TEST_F(TrackTest, GenerateJSON)
+{
+    Track opusTrack = Track(this->OPUS_PATH);
+
+    opusTrack.readMetadata();
+
+    Json::Value trackJson = opusTrack.toJSON();
+
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "    ";
+    std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+
+    std::ostringstream outStr;
+
+    writer->write(trackJson, &outStr);
+    outStr << std::endl;
+
+    std::ofstream outFile = std::ofstream("./track.json", std::ios::out | std::ios::trunc);
+    if(outFile.is_open())
+    {
+        outFile.write(outStr.str().c_str(), outStr.str().length());
+        outFile.close();
+    }
 }
 
 int main(int argc, char **argv) {
