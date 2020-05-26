@@ -39,16 +39,16 @@ namespace MusicList
     /**
      * Possbile track formats.
      */
-    enum class AudioFormat 
+    enum class AudioFormat : uint_fast8_t
     {
+        unknown = 0,
         flac,
         ogg_flac,
         opus,
         aac,
         vorbis,
-        mp3,
-        unknown
-    }; 
+        mp3
+    };
 
     class Track 
     {

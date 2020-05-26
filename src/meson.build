@@ -1,6 +1,6 @@
 # Music Data Library
 
-music_data_srcs = ['Track.cpp', 'Track.hpp', 'Album.cpp', 'Album.hpp']
+music_data_srcs = ['Track.cpp', 'Track.hpp', 'Album.cpp', 'Album.hpp', 'BlockPicture.cpp', 'BlockPicture.hpp']
 
 flac = dependency('flac', required: true)
 vorbis = dependency('vorbis', required: true)
