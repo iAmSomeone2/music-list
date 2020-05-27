@@ -74,9 +74,11 @@ namespace MusicList
 
         ~BlockPicture();
 
-        void readPictureBlock(const string& data, bool b64Encoded);
+        void readPictureBlock(const string& data);
 
         static vector<int8_t> base64Decode(const string& data);
+
+        static uint32_t toUint32(const int8_t* data);
     };
 };
 

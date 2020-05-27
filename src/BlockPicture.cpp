@@ -63,11 +63,21 @@ vector<int8_t> BlockPicture::base64Decode(const string& data)
     return outVec;
 }
 
-void BlockPicture::readPictureBlock(const string& data, bool b64Encoded)
+uint32_t BlockPicture::toUint32(const int8_t* data)
 {
-    if (b64Encoded)
-    {
-        // Decode the base64 data.
+    return static_cast<uint32_t>((data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0]);
+}
 
-    }
+void BlockPicture::readPictureBlock(const string& data)
+{
+    vector<int8_t> blockData = BlockPicture::base64Decode(data);
+
+    this->type = PictureType(BlockPicture::toUint32(blockData.data()));
+
+    uint32_t mimeLen = BlockPicture::toUint32(blockData.data() + 4);
+
+    this->mimeType = new char[mimeLen+1];
+    strncpy(this->mimeType, reinterpret_cast<char*>(blockData.data() + 8), mimeLen);
+
+
 }
