@@ -148,7 +148,15 @@ void Track::readMetadata()
         this->readFlacMetadata();
         break;
     case AudioFormat::opus:
-        this->readOpusMetadata();
+        try
+        {
+            this->readOpusMetadata();
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "\n" << e.what() << '\n';
+            std::cerr << "File: " << this->path.string() << "\n";
+        }
         break;
     default:
         throw unsupported_format_error(this->path);
@@ -225,6 +233,7 @@ void Track::readOpusMetadata()
     {
         throw std::runtime_error("Failed to open Opus file to retrieve metadata.");
     }
+
     // Locate OpusTags in file
     char *buff = static_cast<char *>(calloc(9, sizeof(char)));
     uint64_t readPos = trackStream.tellg();
