@@ -4,9 +4,11 @@ music_data_srcs = ['Track.cpp', 'Track.hpp', 'Album.cpp', 'Album.hpp', 'BlockPic
 
 flac = dependency('flac', required: true)
 vorbis = dependency('vorbis', required: true)
+opus = dependency('opus', required: true)
+opusfile = dependency('opusfile', required: true)
 
 lib_music_data = static_library('musicdata', music_data_srcs,
-        dependencies: [flac, vorbis, jsoncpp]
+        dependencies: [flac, vorbis, opus, opusfile, jsoncpp]
 )
 
 # Main executable
