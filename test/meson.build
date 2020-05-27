@@ -14,6 +14,14 @@ album_test = executable('album-test', ['AlbumTest.cpp'],
 
 test('Album Test', album_test)
 
+# list_test = executable('list-test', ['ListTest.cpp'],
+#     include_directories: [proj_include],
+#     dependencies: [gtest],
+#     link_with: [lib_music_data]
+# )
+
+# test('Music List Test', list_test)
+
 # pic_test = executable('pic-test', ['BlockPictureTest.cpp'],
 #     include_directories: [proj_include],
 #     dependencies: [gtest],
