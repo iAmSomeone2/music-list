@@ -24,7 +24,6 @@ TEST_F(AlbumTest, SingleFile)
     Track track02 = Track(SINGLE_TRACK);
     Album am = Album();
 
-    track02.readMetadata();
     ASSERT_TRUE(am.addTrack(track02));
 
     ASSERT_EQ(am.getName(), "AM");
@@ -36,8 +35,6 @@ TEST_F(AlbumTest, SameFile)
 {
     Track track02 = Track(SINGLE_TRACK);
     Album am = Album();
-
-    track02.readMetadata();
 
     ASSERT_TRUE(am.addTrack(track02));
     ASSERT_FALSE(am.addTrack(track02));

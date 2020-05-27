@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <set>
 #include <vector>
 #include <cinttypes>
 #include <cctype>
@@ -19,8 +20,9 @@ namespace fs = std::filesystem;
 using std::string;
 using std::vector;
 using std::map;
+using std::set;
 
-void runAlbumSearch(const fs::path& path, map<string,Album>& albums)
+vector<Album> runAlbumSearch(const fs::path& path)
 {
     vector<fs::path> trackPaths;
     for (const auto& item : fs::recursive_directory_iterator(path))
@@ -39,15 +41,20 @@ void runAlbumSearch(const fs::path& path, map<string,Album>& albums)
         }
     }
 
-    uint_fast32_t totalTracks = trackPaths.size();
+    uint32_t totalTracks = trackPaths.size();
+    vector<Track> allTracks;
+    allTracks.reserve(totalTracks);
 
     std::cout << "Discovered " << std::to_string(totalTracks) << " audio files in " << path.string() << ".\n";
     std::cout << "Processing files...\n";
 
-    uint_fast32_t totalProcessed = 0;
+    uint32_t totalProcessed = 0;
     for (totalProcessed = 0; totalProcessed < totalTracks; totalProcessed++)
     {
+        std::cout << "\33[2K\rProcessing file " << std::to_string(totalProcessed) << " of " << std::to_string(totalTracks) << "..." << std::flush;
         fs::path trackPath = trackPaths[totalProcessed];
+
+        //std::cout << "\33[2K\rImporting " << trackPath.string() << std::flush; 
         
         Track track = Track();
 
@@ -70,33 +77,16 @@ void runAlbumSearch(const fs::path& path, map<string,Album>& albums)
             std::cerr << err.what() << std::endl;
             continue;
         }
-        
-
-        string trackMBID = track.getMBID();
-        map<string,string> trackTags = track.getTags();
-        string albumMBID = trackTags["MUSICBRAINZ_ALBUMID"];
-
-        if (albumMBID == "")
-        {
-            continue;
-        }
-
-        // Determine whether an Album for this track is already present.
-        // Create a new one if not.
-        Album album = albums.count(albumMBID) == 0 ? Album() : albums[albumMBID];
-        
-        album.addTrack(track);
-        albums[albumMBID] = album;
-
-        std::cout << "\33[2K\rProcessed " << std::to_string(totalProcessed) << " of " << std::to_string(totalTracks) << " files." << std::flush;
-
-        if (totalProcessed >= 2239)
-        {
-            std::cerr << "\nCurrent file: " << trackPath.string() << std::endl;
-        }
     }
 
+    std::cout << std::endl;
+    std::cout << "Generating albums...\n";
+
+    vector<Album> albums;
+
     std::cout << "\nGenerated " << std::to_string(albums.size()) << " albums.\n";
+
+    return albums;
 }
 
 int main(int argc, char* argv[])
@@ -123,9 +113,7 @@ int main(int argc, char* argv[])
     std::cout << "Searching through: " << searchPath.string() << "\n";
 
     // Search through the directory.
-    map<string,Album> albums;
-
-    runAlbumSearch(searchPath, albums);
+    auto albums = runAlbumSearch(searchPath);
 
     return EXIT_SUCCESS;
 }

@@ -58,7 +58,7 @@ namespace MusicList
 
         friend inline bool operator< (const Album& lhs, const Album& rhs)
         {
-            return std::tie(lhs.artist, lhs.name) < std::tie(rhs.artist, rhs.name);
+            return std::tie(lhs.mbid, lhs.artist, lhs.name) < std::tie(rhs.mbid, rhs.artist, rhs.name);
         }
 
         friend inline bool operator> (const Album& lhs, const Album& rhs) { return rhs < lhs; }

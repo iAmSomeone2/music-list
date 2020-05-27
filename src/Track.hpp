@@ -126,7 +126,7 @@ namespace MusicList
          * 
          * @param path filesystem path to the track to use.
          */
-        inline void setPath(const fs::path& path);
+        void setPath(const fs::path& path);
 
         // ==================
         // Metadata Retrieval
@@ -164,7 +164,7 @@ namespace MusicList
          * 
          * @returns unsigned 32-bit int from the first 4 bytes in the input array.
          */
-        static inline uint_fast32_t toUInt32(const char* bytes);
+        static inline uint32_t toUInt32(const char* bytes);
 
         // =======
         // Getters

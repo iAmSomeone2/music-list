@@ -1,5 +1,6 @@
 #include <fstream>
 #include <memory>
+#include <vector>
 #include <cstring>
 #include <iostream>
 
@@ -21,46 +22,45 @@ Track::Track()
     this->path = "./";
 }
 
-Track::Track(const fs::path& path)
+Track::Track(const fs::path &path)
 {
     try
     {
         this->setPath(path);
         this->readMetadata();
     }
-    catch(const unsupported_format_error& e)
+    catch (const unsupported_format_error &e)
     {
         std::cerr << e.what() << '\n';
     }
 }
 
-void Track::setPath(const fs::path& path)
+void Track::setPath(const fs::path &path)
 {
     this->path = path;
     try
     {
         this->format = this->determineFormat(this->path);
     }
-    catch (const unsupported_format_error& err)
+    catch (const unsupported_format_error &err)
     {
-        // std::cerr << err.what() << "\n";
         throw err;
-    } 
+    }
 
     switch (this->format)
     {
-        case AudioFormat::flac:
-            this->isLossless = true;
-            break;
-        case AudioFormat::ogg_flac:
-            this->isLossless = true;
-            break;
-        default:
-            this->isLossless = false;
+    case AudioFormat::flac:
+        this->isLossless = true;
+        break;
+    case AudioFormat::ogg_flac:
+        this->isLossless = true;
+        break;
+    default:
+        this->isLossless = false;
     }
 }
 
-AudioFormat Track::determineOggAudioFormat(const fs::path& path)
+AudioFormat Track::determineOggAudioFormat(const fs::path &path)
 {
     // Don't check the extension since this is a private method, and we should already know that it's .ogg
 
@@ -87,11 +87,11 @@ AudioFormat Track::determineOggAudioFormat(const fs::path& path)
     {
         return AudioFormat::opus;
     }
-    else if (strncmp("vorbis", buff+1, 6) == 0)
+    else if (strncmp("vorbis", buff + 1, 6) == 0)
     {
         return AudioFormat::vorbis;
     }
-    else if (strncmp("FLAC", buff+1, 4) == 0)
+    else if (strncmp("FLAC", buff + 1, 4) == 0)
     {
         return AudioFormat::ogg_flac;
     }
@@ -99,7 +99,7 @@ AudioFormat Track::determineOggAudioFormat(const fs::path& path)
     return AudioFormat::unknown;
 }
 
-AudioFormat Track::determineFormat(const fs::path& path)
+AudioFormat Track::determineFormat(const fs::path &path)
 {
     string fileExt = path.extension();
 
@@ -142,54 +142,54 @@ AudioFormat Track::determineFormat(const fs::path& path)
 
 void Track::readMetadata()
 {
-    switch(this->format)
+    switch (this->format)
     {
-        case AudioFormat::flac:
-            this->readFlacMetadata();
-            break;
-        case AudioFormat::opus:
-            this->readOpusMetadata();
-            break;
-        default:
-            throw unsupported_format_error(this->path);
+    case AudioFormat::flac:
+        this->readFlacMetadata();
+        break;
+    case AudioFormat::opus:
+        this->readOpusMetadata();
+        break;
+    default:
+        throw unsupported_format_error(this->path);
     }
 }
 
-void Track::addMetadataPair(const string& key, const string& value)
+void Track::addMetadataPair(const string &key, const string &value)
 {
     string tmpKey = key;
     if (tmpKey == "ARTIST")
-        {
-            tmpKey = tmpKey.append(std::to_string(this->artistCount));
-            this->artistCount++;
-        }
-        else if (tmpKey == "TRACKNUMBER")
-        {
-            this->trackNum = strtoul(value.c_str(), nullptr, 10);
-        }
-        else if (tmpKey == "TOTALTRACKS")
-        {
-            this->totalTracks = strtoul(value.c_str(), nullptr, 10);
-        }
-        else if (tmpKey == "DISCNUMBER")
-        {
-            this->discNum = strtoul(value.c_str(), nullptr, 10);
-        }
-        else if (tmpKey == "TOTALDISCS")
-        {
-            this->totalDiscs = strtoul(value.c_str(), nullptr, 10);
-        }
-        else if (tmpKey == "MUSICBRAINZ_TRACKID")
-        {
-            this->mbid = value;
-        }
-        
-        this->tags[tmpKey] = value;
+    {
+        tmpKey = tmpKey.append(std::to_string(this->artistCount));
+        this->artistCount++;
+    }
+    else if (tmpKey == "TRACKNUMBER")
+    {
+        this->trackNum = strtoul(value.c_str(), nullptr, 10);
+    }
+    else if (tmpKey == "TOTALTRACKS")
+    {
+        this->totalTracks = strtoul(value.c_str(), nullptr, 10);
+    }
+    else if (tmpKey == "DISCNUMBER")
+    {
+        this->discNum = strtoul(value.c_str(), nullptr, 10);
+    }
+    else if (tmpKey == "TOTALDISCS")
+    {
+        this->totalDiscs = strtoul(value.c_str(), nullptr, 10);
+    }
+    else if (tmpKey == "MUSICBRAINZ_TRACKID")
+    {
+        this->mbid = value;
+    }
+
+    this->tags[tmpKey] = value;
 }
 
 void Track::readFlacMetadata()
 {
-    FLAC__StreamMetadata* streamMetadata = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+    FLAC__StreamMetadata *streamMetadata = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
 
     bool success = static_cast<bool>(FLAC__metadata_get_tags(this->path.c_str(), &streamMetadata));
 
@@ -202,11 +202,11 @@ void Track::readFlacMetadata()
     FLAC__StreamMetadata_VorbisComment vorbisComment = streamMetadata->data.vorbis_comment;
     for (uint32_t i = 0; i < vorbisComment.num_comments; i++)
     {
-        string fullEntry = reinterpret_cast<char*>(vorbisComment.comments[i].entry);
+        string fullEntry = reinterpret_cast<char *>(vorbisComment.comments[i].entry);
         auto splitLoc = fullEntry.find('=');
-        
+
         string key = fullEntry.substr(0, splitLoc);
-        string value = fullEntry.substr(splitLoc+1);
+        string value = fullEntry.substr(splitLoc + 1);
 
         this->addMetadataPair(key, value);
     }
@@ -219,66 +219,79 @@ void Track::readFlacMetadata()
 }
 
 void Track::readOpusMetadata()
-{   
+{
     std::ifstream trackStream = std::ifstream(this->path, std::ios::binary);
-    if(!trackStream.is_open())
+    if (!trackStream.is_open())
     {
         throw std::runtime_error("Failed to open Opus file to retrieve metadata.");
     }
     // Locate OpusTags in file
-    char *buff = static_cast<char*>(calloc(9, sizeof(char)));
-    while (strncmp(buff, "OpusTags", 8) != 0)
+    char *buff = static_cast<char *>(calloc(9, sizeof(char)));
+    uint64_t readPos = trackStream.tellg();
+    while (strncmp(buff, "OpusTags", 8) != 0 && readPos < UINT16_MAX)
     {
         trackStream.readsome(&buff[0], 1);
         if (buff[0] == 'O')
         {
-            trackStream.readsome(buff+1, 7);
+            trackStream.readsome(buff + 1, 7);
         }
+        readPos = trackStream.tellg();
     }
+
+    if (readPos >= UINT16_MAX)
+    {
+        throw std::runtime_error("Unable to locate metadata in file.");
+    }
+
     // Skip past the vendor string
-    buff = static_cast<char*>(realloc(buff, sizeof(char) * 4));
+    buff[4] = 0;
     trackStream.readsome(buff, 4);
-    uint_fast32_t vendorStrLen = Track::toUInt32(buff);
-    uint_fast64_t skipLoc = trackStream.tellg() + static_cast<std::streampos>(vendorStrLen);
+    uint32_t vendorStrLen = Track::toUInt32(buff);
+    uint64_t skipLoc = trackStream.tellg() + static_cast<std::streampos>(vendorStrLen);
     trackStream.seekg(skipLoc);
 
     // Get number of user comments
     trackStream.readsome(buff, 4);
-    uint_fast32_t numUserComments = Track::toUInt32(buff);
+    uint32_t numUserComments = Track::toUInt32(buff);
 
     // For each comment, get its length,
     // convert it to a string, and split into a key and value pair.
-    for (uint_fast32_t i = 0; i < numUserComments; i++)
+    for (uint32_t i = 0; i < numUserComments; i++)
     {
         trackStream.readsome(buff, 4);
-        uint_fast32_t entryLen = Track::toUInt32(buff);
+        uint32_t entryLen = Track::toUInt32(buff);
 
-        if (entryLen >= UINT32_MAX)
+        if (entryLen >= UINT16_MAX)
         {
-            entryLen = 1024000; // 1MiB
+            entryLen = UINT16_MAX;
         }
 
-        buff = static_cast<char*>(realloc(buff, sizeof(char) * (entryLen + 1)));
+        buff = static_cast<char *>(realloc(buff, (entryLen + 1) * sizeof(char)));
         buff[entryLen] = 0;
 
         trackStream.readsome(buff, entryLen);
         string entry = buff;
 
         auto splitLoc = entry.find('=');
-        
+
         string key = entry.substr(0, splitLoc);
         if (key == "METADATA_BLOCK_PICTURE")
         {
             // TODO: Figure out the correct way to deal with the picture.
             // The picture should not be stored in the tags list.
+            this->addMetadataPair(key, "Not Supported");
             continue;
         }
-        string value = entry.substr(splitLoc+1);
+        else
+        {
+            string value = entry.substr(splitLoc + 1);
 
-        this->addMetadataPair(key, value);
+            this->addMetadataPair(key, value);
+        }
     }
 
     delete[] buff;
+
     trackStream.close();
 
     this->artist = this->tags["ARTIST0"];
@@ -303,30 +316,30 @@ const Json::Value Track::toJSON() const
     root["album"] = this->album;
     root["is_lossless"] = this->isLossless;
     root["musicbrainz_id"] = this->mbid;
-    
+
     string formatStr;
     switch (this->format)
     {
-        case AudioFormat::aac:
-            formatStr = "AAC";
-            break;
-        case AudioFormat::flac:
-            formatStr = "FLAC";
-            break;
-        case AudioFormat::mp3:
-            formatStr = "MP3";
-            break;
-        case AudioFormat::ogg_flac:
-            formatStr = "FLAC";
-            break;
-        case AudioFormat::opus:
-            formatStr = "Opus";
-            break;
-        case AudioFormat::vorbis:
-            formatStr = "Vorbis";
-            break;
-        default:
-            formatStr = "unkown";
+    case AudioFormat::aac:
+        formatStr = "AAC";
+        break;
+    case AudioFormat::flac:
+        formatStr = "FLAC";
+        break;
+    case AudioFormat::mp3:
+        formatStr = "MP3";
+        break;
+    case AudioFormat::ogg_flac:
+        formatStr = "FLAC";
+        break;
+    case AudioFormat::opus:
+        formatStr = "Opus";
+        break;
+    case AudioFormat::vorbis:
+        formatStr = "Vorbis";
+        break;
+    default:
+        formatStr = "unkown";
     }
 
     root["format"] = formatStr;
@@ -334,7 +347,7 @@ const Json::Value Track::toJSON() const
     return root;
 }
 
-inline uint_fast32_t Track::toUInt32(const char* bytes)
+inline uint32_t Track::toUInt32(const char *bytes)
 {
     return (bytes[3] << 24) | (bytes[2] << 16) | (bytes[1] << 8) | bytes[0];
 }
@@ -343,57 +356,57 @@ inline uint_fast32_t Track::toUInt32(const char* bytes)
 // Getters
 // =======
 
-const map<string,string>& Track::getTags() const
+const map<string, string> &Track::getTags() const
 {
     return this->tags;
 }
 
-const string& Track::getTitle() const
+const string &Track::getTitle() const
 {
     return this->title;
 }
 
-const string& Track::getArtist() const
+const string &Track::getArtist() const
 {
     return this->artist;
 }
 
-const string& Track::getAlbum() const
+const string &Track::getAlbum() const
 {
     return this->album;
 }
 
-const uint_fast8_t& Track::getTrackNum() const
+const uint_fast8_t &Track::getTrackNum() const
 {
     return this->trackNum;
 }
 
-const uint_fast8_t& Track::getTotalTracks() const
+const uint_fast8_t &Track::getTotalTracks() const
 {
     return this->totalTracks;
 }
 
-const uint_fast8_t& Track::getDiscNum() const
+const uint_fast8_t &Track::getDiscNum() const
 {
     return this->discNum;
 }
 
-const uint_fast8_t& Track::getTotalDiscs() const
+const uint_fast8_t &Track::getTotalDiscs() const
 {
     return this->totalDiscs;
 }
 
-const AudioFormat& Track::getAudioFormat() const
+const AudioFormat &Track::getAudioFormat() const
 {
     return this->format;
 }
 
-const fs::path& Track::getPath() const 
+const fs::path &Track::getPath() const
 {
     return this->path;
 }
 
-const string& Track::getMBID() const
+const string &Track::getMBID() const
 {
     return this->mbid;
 }

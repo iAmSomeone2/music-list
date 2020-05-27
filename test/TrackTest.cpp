@@ -57,8 +57,6 @@ TEST_F(TrackTest, ImportFlacMetadata)
 {
     Track flacTrack = Track(this->FLAC_PATH);
 
-    flacTrack.readMetadata();
-
     ASSERT_EQ("Beck", flacTrack.getArtist());
     ASSERT_EQ("Morning Phase", flacTrack.getAlbum());
     ASSERT_EQ("Turn Away", flacTrack.getTitle());
@@ -72,8 +70,6 @@ TEST_F(TrackTest, ImportOpusMetadata)
 {
     Track opusTrack = Track(this->OPUS_PATH);
 
-    opusTrack.readMetadata();
-
     ASSERT_EQ("Beck", opusTrack.getArtist());
     ASSERT_EQ("Morning Phase", opusTrack.getAlbum());
     ASSERT_EQ("Turn Away", opusTrack.getTitle());
@@ -81,13 +77,14 @@ TEST_F(TrackTest, ImportOpusMetadata)
     ASSERT_EQ(13, opusTrack.getTotalTracks());
     ASSERT_EQ(1, opusTrack.getDiscNum());
     ASSERT_EQ(1, opusTrack.getTotalDiscs());
+
+    auto trackTags = opusTrack.getTags();
+    ASSERT_EQ(trackTags.size(), 33);
 }
 
 TEST_F(TrackTest, GenerateJSON)
 {
     Track opusTrack = Track(this->OPUS_PATH);
-
-    opusTrack.readMetadata();
 
     Json::Value trackJson = opusTrack.toJSON();
 
