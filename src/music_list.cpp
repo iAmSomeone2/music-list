@@ -52,8 +52,6 @@ map<string,Album*> runAlbumSearch(const fs::path& path)
     {
         std::cout << "\33[2K\rProcessing file " << std::to_string(totalProcessed) << " of " << std::to_string(totalTracks) << "..." << std::flush;
         fs::path trackPath = trackPaths[totalProcessed];
-
-        //std::cout << "\33[2K\rImporting " << trackPath.string() << std::flush; 
         
         Track track = Track();
 
