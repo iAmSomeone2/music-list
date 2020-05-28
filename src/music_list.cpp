@@ -80,7 +80,7 @@ map<string,Album*> runAlbumSearch(const fs::path& path)
         allTracks.push_back(track);
     }
 
-    std::cout << "\33[2K\rProcessing file " << std::to_string(totalProcessed) << " of " << std::to_string(totalTracks) << "..." << std::flush;
+    std::cout << "\33[2K\rImported " << std::to_string(allTracks.size()) << " of " << std::to_string(totalTracks) << std::flush;
     std::cout << std::endl;
     std::cout << "Generating albums...\n";
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 
     Json::StreamWriterBuilder builder;
     builder["commentStyle"] = "None";
-    builder["indentation"] = "    ";
+    builder["indentation"] = "";
     std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
 
     std::ostringstream outStr;
