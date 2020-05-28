@@ -4,6 +4,7 @@
 #include <map>
 #include <cinttypes>
 #include <cctype>
+#include <fstream>
 
 #include <json/value.h>
 #include <json/writer.h>
@@ -128,6 +129,33 @@ int main(int argc, char* argv[])
     // Search through the directory.
     auto albums = runAlbumSearch(searchPath);
 
+    // Export data in JSON format.
+    Json::Value root;
+    uint32_t count = 0;
+    for (const auto& albumPair : albums)
+    {
+        root[count] = albumPair.second->toJSON();
+        count++;
+    }
+
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "    ";
+    std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+
+    std::ostringstream outStr;
+
+    writer->write(root, &outStr);
+    outStr << std::endl;
+
+    std::ofstream outFile = std::ofstream(jsonOut, std::ios::out | std::ios::trunc);
+    if (outFile.is_open())
+    {
+        outFile.write(outStr.str().c_str(), outStr.str().length());
+        outFile.close();
+    }
+
+    // Clean up pointers.
     for (const auto& albumPair : albums)
     {
         delete albumPair.second;
