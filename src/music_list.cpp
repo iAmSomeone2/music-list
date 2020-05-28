@@ -2,8 +2,6 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <set>
-#include <vector>
 #include <cinttypes>
 #include <cctype>
 
@@ -22,7 +20,7 @@ using std::vector;
 using std::map;
 using std::set;
 
-vector<Album> runAlbumSearch(const fs::path& path)
+map<string,Album*> runAlbumSearch(const fs::path& path)
 {
     vector<fs::path> trackPaths;
     for (const auto& item : fs::recursive_directory_iterator(path))
@@ -77,14 +75,29 @@ vector<Album> runAlbumSearch(const fs::path& path)
             std::cerr << err.what() << std::endl;
             continue;
         }
+
+        allTracks.push_back(track);
     }
 
+    std::cout << "\33[2K\rProcessing file " << std::to_string(totalProcessed) << " of " << std::to_string(totalTracks) << "..." << std::flush;
     std::cout << std::endl;
     std::cout << "Generating albums...\n";
 
-    vector<Album> albums;
+    map<string,Album*> albums;
+    for (const auto& track : allTracks)
+    {
+        auto trackTags = track.getTags();
+        const auto& albumID = trackTags["MUSICBRAINZ_ALBUMID"];
+        Album* workAlbum = albums.count(albumID) ? albums[albumID] : new Album();
 
-    std::cout << "\nGenerated " << std::to_string(albums.size()) << " albums.\n";
+        workAlbum->addTrack(track);
+        albums[albumID] = workAlbum;
+
+        std::cout << "\33[2K\rTrack, " << track.getTitle() << ", added to " << workAlbum->getName() << "." << std::flush; 
+    }
+
+    std::cout << std::endl;
+    std::cout << "Generated " << std::to_string(albums.size()) << " albums.\n";
 
     return albums;
 }
@@ -114,6 +127,11 @@ int main(int argc, char* argv[])
 
     // Search through the directory.
     auto albums = runAlbumSearch(searchPath);
+
+    for (const auto& albumPair : albums)
+    {
+        delete albumPair.second;
+    }
 
     return EXIT_SUCCESS;
 }
