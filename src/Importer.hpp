@@ -31,10 +31,31 @@ namespace MusicList
     public:
         Importer();
 
+        /**
+         * @brief Performs a search and import for supported files in the specified directory.
+         * 
+         * @param path directory to import from
+         */
         void runTrackSearch(const fs::path& path);
 
+        /**
+         * @brief Organizes tracks into their respective albums.
+         * 
+         * Running this method after generating a track list allows the user to export the
+         * data using the toJSON() method.
+         */
+        void generateAlbumsFromTracks();
+
+        /**
+         * @brief Generates a Json Value containing an array with all imported albums.
+         * 
+         * @returns Json::Value containing albums array
+         */
         Json::Value toJSON();
 
+        /**
+         * @returns a reference to the tracks vector.
+         */
         const vector<shared_ptr<Track>>& getTracks();
     };
 } // namespace MusicList

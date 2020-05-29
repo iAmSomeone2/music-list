@@ -16,10 +16,10 @@ lib_music_data = static_library('musicdata', music_data_srcs,
 
 # Main executable
 
-gtk = dependency('gtkmm-3.0', required: true)
+# gtk = dependency('gtkmm-3.0', required: true)
 
-music_list = executable('musiclist', ['music_list.cpp'],
-        dependencies: [jsoncpp, gtk],
-        include_directories: [proj_include],
-        link_with: [lib_music_data]
-)
+# music_list = executable('musiclist', ['music_list.cpp'],
+#         dependencies: [jsoncpp, gtk],
+#         include_directories: [proj_include],
+#         link_with: [lib_music_data]
+# )

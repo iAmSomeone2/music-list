@@ -56,5 +56,10 @@
         "typeinfo": "cpp",
         "set": "cpp",
         "iostream": "cpp"
-    }
+    },
+    "mesonbuild.buildFolder": "build",
+    "mesonbuild.configureOptions": [
+        "--buildtype=debug",
+        "--enable_tests=true"
+    ]
 }

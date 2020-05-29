@@ -62,6 +62,28 @@ void Importer::runTrackSearch(const fs::path& path)
     std::cout << std::endl;
 }
 
+void Importer::generateAlbumsFromTracks()
+{
+    for (const auto& track : this->tracks)
+    {
+        auto trackTags = track->getTags();
+        const auto& albumID = trackTags["MUSICBRAINZ_ALBUMID"];
+        shared_ptr<Album> albumPtr = std::make_shared<Album>();
+
+        if (this->albums.count(albumID) == 0)
+        {
+            albumPtr = this->albums[albumID];
+        }
+        else
+        {
+            albumPtr = std::make_shared<Album>(Album());
+        }
+        
+        albumPtr->addTrack(track);
+        this->albums[albumID] = albumPtr;
+    }
+}
+
 const vector<shared_ptr<Track>>& Importer::getTracks()
 {
     return this->tracks;

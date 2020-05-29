@@ -1,15 +1,17 @@
 #ifndef MUSICLIST_ALBUM_HPP
 #define MUSICLIST_ALBUM_HPP
 
-#include <set>
+#include <map>
 #include <string>
+#include <memory>
 #include <cinttypes>
 #include <json/value.h>
 
 #include "Track.hpp"
 
 using std::string;
-using std::set;
+using std::map;
+using std::shared_ptr;
 
 namespace MusicList
 {
@@ -19,19 +21,19 @@ namespace MusicList
         string name;
         string artist;
         string mbid;
-        set<Track> tracks;
+        map<string,shared_ptr<Track>> tracks;
         uint_fast8_t totalTracks;
     public:
         Album();
 
-        explicit Album(const Track& track);
+        explicit Album(const shared_ptr<Track>& track);
 
         /**
          * @brief Adds a new track to the Album.
          * 
          * @param track Track object to add to the Album.
          */
-        bool addTrack(const Track& track);
+        void addTrack(const shared_ptr<Track>& track);
 
         /**
          * @brief Creates a JSON value containing the object's data.
@@ -46,7 +48,7 @@ namespace MusicList
 
         const string& getArtist() const;
 
-        const set<Track>& getTrackSet() const;
+        const map<string,shared_ptr<Track>>& getTrackSet() const;
 
         const uint_fast8_t& getTotalTracks() const;
 

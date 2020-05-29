@@ -1,4 +1,5 @@
 #include <vector>
+#include <memory>
 #include <fstream>
 
 #include <gtest/gtest.h>
@@ -8,6 +9,7 @@
 #include <Album.hpp>
 
 using std::vector;
+using std::shared_ptr;
 
 using namespace MusicList;
 
@@ -21,10 +23,10 @@ protected:
 
 TEST_F(AlbumTest, SingleFile)
 {
-    Track track02 = Track(SINGLE_TRACK);
+    shared_ptr<Track> track02 = std::make_shared<Track>(Track(SINGLE_TRACK));
     Album am = Album();
 
-    ASSERT_TRUE(am.addTrack(track02));
+    am.addTrack(track02);
 
     ASSERT_EQ(am.getName(), "AM");
     ASSERT_EQ(am.getArtist(), "Arctic Monkeys");
@@ -33,11 +35,14 @@ TEST_F(AlbumTest, SingleFile)
 
 TEST_F(AlbumTest, SameFile)
 {
-    Track track02 = Track(SINGLE_TRACK);
+    shared_ptr<Track> track02 = std::make_shared<Track>(Track(SINGLE_TRACK));
     Album am = Album();
 
-    ASSERT_TRUE(am.addTrack(track02));
-    ASSERT_FALSE(am.addTrack(track02));
+    am.addTrack(track02);
+    am.addTrack(track02);
+
+    auto tracks = am.getTrackSet();
+    ASSERT_EQ(tracks.size(), 1);
 }
 
 TEST_F(AlbumTest, FullAlbum)
@@ -49,7 +54,7 @@ TEST_F(AlbumTest, FullAlbum)
         {
             try
             {
-                Track newTrack = Track(item);
+                shared_ptr<Track> newTrack = std::make_shared<Track>(Track(item));
                 album.addTrack(newTrack);
             }
             catch (const unsupported_format_error &err)
@@ -69,7 +74,7 @@ TEST_F(AlbumTest, ProblematicAlbum)
         {
             try
             {
-                album.addTrack(Track(item));
+                album.addTrack(std::make_shared<Track>(Track(item)));
             }
             catch (const unsupported_format_error &err)
             {
@@ -88,7 +93,7 @@ TEST_F(AlbumTest, GenerateJSON)
         {
             try
             {
-                Track newTrack = Track(item);
+                shared_ptr<Track> newTrack = std::make_shared<Track>(Track(item));
                 album.addTrack(newTrack);
             }
             catch (const unsupported_format_error &err)

@@ -4,7 +4,7 @@ using namespace MusicList;
 
 Album::Album() = default;
 
-Album::Album(const Track& track)
+Album::Album(const shared_ptr<Track>& track)
 {
     this->addTrack(track);
 }
@@ -20,32 +20,33 @@ const Json::Value Album::toJSON() const
     root["tracks"] = Json::Value();
     for (const auto& track : this->tracks)
     {
-        root["tracks"].append(track.toJSON());
+        root["tracks"].append(track.second->toJSON());
     }
 
     return root;
 }
 
-bool Album::addTrack(const Track& track)
+void Album::addTrack(const shared_ptr<Track>& track)
 {
-    if (track.getAudioFormat() == AudioFormat::unknown)
+    if (track->getAudioFormat() == AudioFormat::unknown)
     {
-        throw unsupported_format_error(track.getPath());
+        throw unsupported_format_error(track->getPath());
     }
 
     if (this->tracks.empty())
     {
         // Initialize basic data since this is the first track to be added.
-        this->totalTracks = track.getTotalTracks();
-        this->name = track.getAlbum();
-        this->artist = track.getArtist();
-        map<string,string> trackTags = track.getTags();
+        this->totalTracks = track->getTotalTracks();
+        this->name = track->getAlbum();
+        this->artist = track->getArtist();
+        map<string,string> trackTags = track->getTags();
         this->mbid = trackTags["MUSICBRAINZ_ALBUMID"];
     }
 
-    auto result = this->tracks.insert(track);
-
-    return result.second;
+    if (this->tracks.count(track->getMBID()) == 0)
+    {
+        this->tracks[track->getMBID()] = track;
+    }
 }
 
 const string& Album::getName() const
@@ -58,7 +59,7 @@ const string& Album::getArtist() const
     return this->artist;
 }
 
-const set<Track>& Album::getTrackSet() const
+const map<string,shared_ptr<Track>>& Album::getTrackSet() const
 {
     return this->tracks;
 }
