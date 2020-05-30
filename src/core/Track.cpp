@@ -240,7 +240,7 @@ void Track::readOpusMetadata()
 
     const OpusTags* tags = op_tags(opusFile, -1);
 
-    for (uint32_t i = 0; i < tags->comments; i++)
+    for (uint32_t i = 0; i < static_cast<uint32_t>(tags->comments); i++)
     {
         string fullEntry = tags->user_comments[i];
         auto splitLoc = fullEntry.find('=');

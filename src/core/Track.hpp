@@ -15,7 +15,7 @@ using std::map;
 
 namespace MusicList
 {
-    static const char* SUPPORTED_EXTS[] = {
+    static const string SUPPORTED_EXTS[] = {
         ".flac", ".opus", ".ogg", ".oga", ".mp3", ".m4a"
     };
     static const uint_fast8_t NUM_EXTS = 6;
