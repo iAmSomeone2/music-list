@@ -49,6 +49,10 @@ void Album::addTrack(const shared_ptr<Track>& track)
     }
 }
 
+// =======
+// Getters
+// =======
+
 const string& Album::getName() const
 {
     return this->name;

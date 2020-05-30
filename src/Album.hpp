@@ -18,11 +18,11 @@ namespace MusicList
     class Album
     {
     private:
-        string name;
-        string artist;
-        string mbid;
-        map<string,shared_ptr<Track>> tracks;
-        uint_fast8_t totalTracks;
+        string name = "";
+        string artist = "";
+        string mbid = "";
+        map<string,shared_ptr<Track>> tracks = map<string,shared_ptr<Track>>();
+        uint_fast8_t totalTracks = 0;
     public:
         Album();
 

@@ -56,35 +56,55 @@ void Importer::runTrackSearch(const fs::path& path)
         }
         
         this->tracks.push_back(trackPtr);
+        std::cout << "\33[2K\rImported " << std::to_string(this->tracks.size()) << " of " << std::to_string(totalTracks) << std::flush;
     }
-
-    std::cout << "\33[2K\rImported " << std::to_string(this->tracks.size()) << " of " << std::to_string(totalTracks) << std::flush;
     std::cout << std::endl;
 }
 
 void Importer::generateAlbumsFromTracks()
 {
-    for (const auto& track : this->tracks)
+    while (!this->tracks.empty())
     {
+        const auto& track = this->tracks.back();
+
         auto trackTags = track->getTags();
         const auto& albumID = trackTags["MUSICBRAINZ_ALBUMID"];
-        shared_ptr<Album> albumPtr = std::make_shared<Album>();
+        shared_ptr<Album> albumPtr = this->albums[albumID];
 
-        if (this->albums.count(albumID) == 0)
-        {
-            albumPtr = this->albums[albumID];
-        }
-        else
+        if (albumPtr == nullptr)
         {
             albumPtr = std::make_shared<Album>(Album());
         }
         
         albumPtr->addTrack(track);
         this->albums[albumID] = albumPtr;
+
+        this->tracks.pop_back();
+        std::cout << "\33[2K\rGenerated " << std::to_string(this->albums.size()) << " albums." << std::flush;
     }
+    std::cout << std::endl;
 }
 
-const vector<shared_ptr<Track>>& Importer::getTracks()
+const Json::Value Importer::toJSON() const
+{
+    Json::Value root;
+    uint32_t count = 0;
+
+    for (const auto& albumPair : this->albums)
+    {
+        root[count] = albumPair.second->toJSON();
+        count++;
+    }
+
+    return root;
+}
+
+const vector<shared_ptr<Track>>& Importer::getTracks() const
 {
     return this->tracks;
+}
+
+const map<string,shared_ptr<Album>>& Importer::getAlbums() const
+{
+    return this->albums;
 }

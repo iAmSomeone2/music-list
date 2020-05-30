@@ -51,12 +51,17 @@ namespace MusicList
          * 
          * @returns Json::Value containing albums array
          */
-        Json::Value toJSON();
+        const Json::Value toJSON() const;
 
         /**
          * @returns a reference to the tracks vector.
          */
-        const vector<shared_ptr<Track>>& getTracks();
+        const vector<shared_ptr<Track>>& getTracks() const;
+
+        /**
+         * @returns a reference to the albums map.
+         */
+        const map<string,shared_ptr<Album>>& getAlbums() const;
     };
 } // namespace MusicList
 
