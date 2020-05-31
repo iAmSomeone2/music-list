@@ -1,3 +1,6 @@
 subdir('core')
 subdir('cli')
-subdir('gui')
+
+if get_option('enable_gui')
+    subdir('gui')
+endif
