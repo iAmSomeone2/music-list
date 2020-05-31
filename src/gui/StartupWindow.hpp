@@ -31,19 +31,41 @@
   
 */
 
-#include <cstdlib>
+#include <memory>
 
-#include <gtkmm-3.0/gtkmm.h>
+#include <gtkmm-3.0/gtkmm/box.h>
+#include <gtkmm-3.0/gtkmm/button.h>
+#include <gtkmm-3.0/gtkmm/window.h>
+#include <gtkmm-3.0/gtkmm/image.h>
+#include <gtkmm-3.0/gtkmm/iconinfo.h>
 
-#include "StartupWindow.hpp"
+using std::shared_ptr;
 
-using namespace MusicList;
-
-int main(int argc, char *argv[])
+namespace MusicList
 {
-    auto app = Gtk::Application::create(argc, argv, "dev.bdavidson.musiclist");
+namespace GUI
+{
+    static const char STARTUP_GLADE_PATH[] = "../ui/startup_window.glade";
 
-    GUI::StartupWindow startupWindow = GUI::StartupWindow();
+    class StartupWindow
+    {
+    protected:
+        Gtk::Window     window;
+        Gtk::Box        box;
+        Gtk::Button     btnMusicScan;
+        Gtk::Button     btnOtherScan;
+        Gtk::Button     btnOpen;
+        Gtk::Button     btnExit;
 
-    return app->run(startupWindow.getWindow());
+        Gtk::Image      musicIcon;
+        Gtk::Image      dirIcon;
+        Gtk::Image      openIcon;
+    public:
+        StartupWindow();
+
+        void exitApp();
+
+        Gtk::Window& getWindow();
+    };
+}
 }
