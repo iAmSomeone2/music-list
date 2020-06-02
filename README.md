@@ -6,7 +6,11 @@ GUI and CLI app for locating music files and verifying album completeness.
 
 - [Goals](#goals)
 - [Build Instructions](#build-instructions)
-  * [Required Libraries](#required-libraries)
+  * [Required Packages](#required-packages)
+     - [Fedora](#fedora)
+     - [Manjaro Linux](#manjaro-linux)
+  * [Set up](#set-up)
+  * [Build](#build)
 
 ## Goals
 
