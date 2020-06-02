@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+    Prepend License
+
+    Adds the text from the LICENSE file in the current working directory to the beginning
+    of each C++ file in the project.
+
+    This program should only be run once per project as it does not check to see if license
+    text already exists in a file before writing to it.
+"""
+
 __author__ = "Brenden Davidson"
 
 import os
