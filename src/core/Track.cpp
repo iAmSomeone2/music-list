@@ -259,7 +259,7 @@ void Track::readFlacMetadata()
 
     FLAC__metadata_object_delete(streamMetadata);
 
-    this->artist = this->tags["ARTIST0"];
+    this->artist = this->tags["ALBUMARTIST"];
     this->album = this->tags["ALBUM"];
     this->title = this->tags["TITLE"];
 }
@@ -290,7 +290,7 @@ void Track::readOpusMetadata()
     //opus_tags_clear(tags);
     op_free(opusFile);
 
-    this->artist = this->tags["ARTIST0"];
+    this->artist = this->tags["ALBUMARTIST"];
     this->album = this->tags["ALBUM"];
     this->title = this->tags["TITLE"];
 }
