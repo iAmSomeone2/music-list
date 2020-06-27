@@ -68,7 +68,7 @@ namespace MusicList
          * 
          * @param path directory to import from
          */
-        void runTrackSearch(const fs::path& path);
+        void runTrackSearch(const fs::path& path, const uint32_t& limit);
 
         /**
          * @brief Organizes tracks into their respective albums.
