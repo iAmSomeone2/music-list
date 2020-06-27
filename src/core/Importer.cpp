@@ -36,7 +36,7 @@ using namespace MusicList;
 
 Importer::Importer() = default;
 
-void Importer::runTrackSearch(const fs::path& path)
+void Importer::runTrackSearch(const fs::path& path, const uint32_t& limit)
 {
     vector<fs::path> trackPaths;
     for (const auto& item : fs::recursive_directory_iterator(path))
@@ -60,9 +60,22 @@ void Importer::runTrackSearch(const fs::path& path)
     std::cout << "Discovered " << std::to_string(totalTracks) << " audio files in " << path.string() << ".\n";
     std::cout << "Processing files...\n";
 
+    bool useLimit = false;
+
+    if (limit > 0)
+    {
+        std::cout << "Limiting import to " << std::to_string(limit) << " files.";
+        useLimit = true;
+    }
+
     uint32_t processed = 0;
     for (; processed < totalTracks; processed++)
     {
+        if (useLimit && processed >= limit)
+        {
+            break;
+        }
+
         const fs::path& trackPath = trackPaths[processed];
 
         shared_ptr<Track> trackPtr = std::make_shared<Track>(Track());

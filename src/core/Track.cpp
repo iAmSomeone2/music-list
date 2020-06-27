@@ -226,8 +226,11 @@ void Track::addMetadataPair(const string &key, const string &value)
     {
         this->mbid = value;
     }
-
-    this->tags[tmpKey] = value;
+    else if (tmpKey != "METADATA_BLOCK_PICTURE")
+    {
+        // Skip the picture. There's no need to store it in memory
+        this->tags[tmpKey] = value;
+    }
 }
 
 void Track::readFlacMetadata()

@@ -30,6 +30,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   
 */
+
 #include <unistd.h>
 #include <filesystem>
 #include <iostream>
@@ -99,7 +100,10 @@ void printHelp()
     std::cout << "Option: -o (Output file)\n  Sets the file to output the search results to.\n  Usage: 'musiclist -o ~/Documents/musiclist.json'\n";
     std::cout << std::endl;
 
-    std::cout << "Option -h (Help)\n  Prints this message and exits.";
+    std::cout << "Option: -l (Limit)\n  Sets the maximum number of files to process.\n  Usage: 'musiclist -l 100'\n";
+    std::cout << std::endl;
+
+    std::cout << "Option -h (Help)\n  Prints this message and exits." << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -107,12 +111,13 @@ int main(int argc, char* argv[])
     // User input handling.
     char* searchPath = nullptr;
     char* outPath = nullptr;
+    uint32_t limit = 0;
 
     char opt;
 
     opterr = 0;
 
-    while((opt = getopt(argc, argv, "i:o:h")) != -1)
+    while((opt = getopt(argc, argv, "i:o:l:h")) != -1)
     {
         switch (opt)
         {
@@ -121,6 +126,9 @@ int main(int argc, char* argv[])
                 break;
             case 'o':
                 outPath = optarg;
+                break;
+            case 'l':
+                limit = strtoul(optarg, nullptr, 10);
                 break;
             case 'h':
                 printHelp();
@@ -151,7 +159,7 @@ int main(int argc, char* argv[])
     // Run import process
     MusicList::Importer importer = MusicList::Importer();
 
-    importer.runTrackSearch(inDir);
+    importer.runTrackSearch(inDir, limit);
     importer.generateAlbumsFromTracks();
 
     // Export to JSON file

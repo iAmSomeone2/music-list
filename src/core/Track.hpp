@@ -137,6 +137,7 @@ namespace MusicList
         string album = "";
         string mbid = "";
         map<string,string> tags;
+        
     public:
         /**
          * @brief Creates a new Track instance where the path is set to "./" by default.
