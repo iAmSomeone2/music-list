@@ -30,6 +30,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   
 */
+
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -47,10 +48,15 @@ namespace fs = std::filesystem;
 class TrackTest : public ::testing::Test
 {
 protected:
-    fs::path FLAC_PATH = fs::path("../res/turn_away.flac");
-    fs::path OPUS_PATH = fs::path("../res/turn_away.opus");
-    fs::path VORBIS_PATH = fs::path("../res/turn_away.ogg");
-    fs::path OGG_FLAC_PATH = fs::path("../res/turn_away.oga");
+    fs::path FLAC_PATH = fs::path("./res/turn_away.flac");
+    fs::path OPUS_PATH = fs::path("./res/turn_away.opus");
+    fs::path VORBIS_PATH = fs::path("./res/turn_away.ogg");
+    fs::path OGG_FLAC_PATH = fs::path("./res/turn_away.oga");
+
+    TrackTest()
+    {
+        std::cout << "Working dir: " << fs::current_path().string() << std::endl;
+    }
 };
 
 // FORMAT CHECKS
@@ -111,7 +117,7 @@ TEST_F(TrackTest, ImportOpusMetadata)
     ASSERT_EQ(1, opusTrack.getTotalDiscs());
 
     auto trackTags = opusTrack.getTags();
-    ASSERT_EQ(trackTags.size(), 33);
+    ASSERT_EQ(trackTags.size(), 27);
 }
 
 TEST_F(TrackTest, GenerateJSON)

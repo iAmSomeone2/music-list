@@ -30,6 +30,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   
 */
+
 #include "Importer.hpp"
 
 using namespace MusicList;
@@ -44,9 +45,9 @@ void Importer::runTrackSearch(const fs::path& path, const uint32_t& limit)
         if (fs::is_regular_file(item))
         {
             const string fileExt = item.path().extension().string();
-            for (uint_fast8_t i = 0; i < NUM_EXTS; i++)
+            for (const auto & i : SUPPORTED_EXTS)
             {
-                if (fileExt == SUPPORTED_EXTS[i])
+                if (fileExt == i)
                 {
                     trackPaths.push_back(item.path());
                 }
@@ -130,7 +131,7 @@ void Importer::generateAlbumsFromTracks()
     std::cout << std::endl;
 }
 
-const Json::Value Importer::toJSON() const
+Json::Value Importer::toJSON() const
 {
     Json::Value root;
     uint32_t count = 0;

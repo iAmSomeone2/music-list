@@ -70,12 +70,12 @@ Track::Track(const fs::path &path)
     }
 }
 
-void Track::setPath(const fs::path &path)
+void Track::setPath(const fs::path &newPath)
 {
-    this->path = path;
+    this->path = newPath;
     try
     {
-        this->format = this->determineFormat(this->path);
+        this->format = Track::determineFormat(this->path);
     }
     catch (const unsupported_format_error &err)
     {
@@ -84,14 +84,14 @@ void Track::setPath(const fs::path &path)
 
     switch (this->format)
     {
-    case AudioFormat::flac:
-        this->isLossless = true;
-        break;
-    case AudioFormat::ogg_flac:
-        this->isLossless = true;
-        break;
-    default:
-        this->isLossless = false;
+        case AudioFormat::flac:
+            this->isLossless = true;
+            break;
+        case AudioFormat::ogg_flac:
+            this->isLossless = true;
+            break;
+        default:
+            this->isLossless = false;
     }
 }
 
@@ -136,6 +136,8 @@ AudioFormat Track::determineOggAudioFormat(const fs::path &path)
 
 AudioFormat Track::determineFormat(const fs::path &path)
 {
+    std::ostringstream errStr;
+
     string fileExt = path.extension();
 
     AudioFormat format = AudioFormat::unknown;
@@ -148,7 +150,8 @@ AudioFormat Track::determineFormat(const fs::path &path)
 
         if (!trackFile.is_open())
         {
-            throw std::runtime_error("Failed to open file to determine audio format.");
+            errStr << "Failed to open file to determine audio format: " << path.string() << ".";
+            throw std::runtime_error(errStr.str());
         }
 
         // Check for flac audio data.
@@ -274,11 +277,11 @@ void Track::readOpusMetadata()
         throw std::runtime_error("Failed to open Opus File.");
     }
 
-    const OpusTags* tags = op_tags(opusFile, -1);
+    const OpusTags* opTags = op_tags(opusFile, -1);
 
-    for (uint32_t i = 0; i < static_cast<uint32_t>(tags->comments); i++)
+    for (uint32_t i = 0; i < static_cast<uint32_t>(opTags->comments); i++)
     {
-        string fullEntry = tags->user_comments[i];
+        string fullEntry = opTags->user_comments[i];
         auto splitLoc = fullEntry.find('=');
 
         string key = fullEntry.substr(0, splitLoc);
@@ -287,7 +290,7 @@ void Track::readOpusMetadata()
         this->addMetadataPair(key, value);
     }
 
-    //opus_tags_clear(tags);
+    //opus_tags_clear(opTags);
     op_free(opusFile);
 
     this->artist = this->tags["ALBUMARTIST"];
@@ -299,7 +302,7 @@ void Track::readOpusMetadata()
 // Operations
 // ==========
 
-const Json::Value Track::toJSON() const
+Json::Value Track::toJSON() const
 {
     Json::Value root;
 

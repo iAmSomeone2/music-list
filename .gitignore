@@ -1,6 +1,7 @@
 # Built files
 build/
 builddir/
+cmake-build-*/
 
 # Audio files
 *.flac
@@ -12,4 +13,4 @@ builddir/
 
 # Resource files
 res/**/*
-! res/**/README.md
+!res/**/README.md

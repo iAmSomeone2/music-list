@@ -83,7 +83,7 @@ namespace MusicList
          * 
          * @returns Json::Value containing albums array
          */
-        const Json::Value toJSON() const;
+        Json::Value toJSON() const;
 
         /**
          * @returns a reference to the tracks vector.

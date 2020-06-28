@@ -66,5 +66,6 @@
     "mesonbuild.configureOptions": [
         "--buildtype=debug",
         "--enable_tests=true"
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }

@@ -42,7 +42,7 @@ Album::Album(const shared_ptr<Track>& track)
     this->addTrack(track);
 }
 
-const Json::Value Album::toJSON() const
+Json::Value Album::toJSON() const
 {
     Json::Value root;
 

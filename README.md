@@ -42,14 +42,12 @@ GUI and CLI app for locating music files and verifying album completeness.
 - flac-devel
 - opus-devel
 - opusfile-devel
-- (Optional) gtkmm30-devel
-- (Optional) glibmm24-devel
 - (Optional) gtest-devel
 
 All-in-one install command:
 
 ``` bash
-    sudo dnf install meson g++ git jsoncpp-devel flac-devel opus-devel opusfile-devel gtkmm30-devel glibmm24-devel gtest-devel
+    sudo dnf install meson g++ git jsoncpp-devel flac-devel opus-devel opusfile-devel gtest-devel
 ```
 
 #### Manjaro Linux
@@ -61,14 +59,12 @@ All-in-one install command:
 - flac
 - opus
 - opusfile
-- (Optional) gtkmm30
-- (Optional) glibmm24
 - (Optional) gtest
 
 All-in-one install command:
 
 ``` bash
-    sudo pacman -S meson g++ git jsoncpp flac opus opusfile gtkmm30 glibmm24 gtest
+    sudo pacman -S meson g++ git jsoncpp flac opus opusfile gtest
 ```
 
 ### Set up
@@ -126,7 +122,7 @@ All-in-one install command:
 
    **Note:** Ninja should have automatically been installed with Meson.
 
-2. Locate built executables under `build/src/cli` and `build/src/gui`.
+2. Locate built executables under `build/src/cli`.
 
 3. ***Optional*** Run tests.
 

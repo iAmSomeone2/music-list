@@ -70,7 +70,7 @@ namespace MusicList
         /**
          * @brief Creates a JSON value containing the object's data.
          */
-        const Json::Value toJSON() const;
+        Json::Value toJSON() const;
 
         // =======
         // Getters

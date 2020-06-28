@@ -156,11 +156,11 @@ namespace MusicList
         explicit Track(const fs::path& path);
 
         /**
-         * @brief Sets the track search path for this Track instance.
+         * @brief Sets the track search newPath for this Track instance.
          * 
-         * @param path filesystem path to the track to use.
+         * @param newPath filesystem newPath to the track to use.
          */
-        void setPath(const fs::path& path);
+        void setPath(const fs::path& newPath);
 
         // ==================
         // Metadata Retrieval
@@ -189,7 +189,7 @@ namespace MusicList
         /**
          * @brief Creates a JSON value containing the object's data.
          */
-        const Json::Value toJSON() const;
+        Json::Value toJSON() const;
 
         /**
          * @brief Converts the first 4 bytes in the input array into an unsigned 32-bit int.
