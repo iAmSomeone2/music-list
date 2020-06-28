@@ -35,109 +35,93 @@ GUI and CLI app for locating music files and verifying album completeness.
 
 #### Fedora
 
-- meson
+- cmake
 - g++ (or clang)
 - git
 - jsoncpp-devel
 - flac-devel
 - opus-devel
 - opusfile-devel
-- (Optional) gtkmm30-devel
-- (Optional) glibmm24-devel
 - (Optional) gtest-devel
 
 All-in-one install command:
 
 ``` bash
-    sudo dnf install meson g++ git jsoncpp-devel flac-devel opus-devel opusfile-devel gtkmm30-devel glibmm24-devel gtest-devel
+    sudo dnf install cmake g++ git jsoncpp-devel flac-devel opus-devel opusfile-devel gtest-devel
 ```
 
 #### Manjaro Linux
 
-- meson
+- cmake
 - g++ (or clang)
 - git
 - jsoncpp
 - flac
 - opus
 - opusfile
-- (Optional) gtkmm30
-- (Optional) glibmm24
 - (Optional) gtest
 
 All-in-one install command:
 
 ``` bash
-    sudo pacman -S meson g++ git jsoncpp flac opus opusfile gtkmm30 glibmm24 gtest
+    sudo pacman -S cmake g++ git jsoncpp flac opus opusfile gtest
 ```
 
 ### Set up
 
 1. Clone repo:
 
-``` bash
-    git clone https://github.com/iAmSomeone2/music-list.git
-```
+    ``` bash
+        git clone https://github.com/iAmSomeone2/music-list.git
+    ```
 
 2. Enter cloned directory:
 
-``` bash
-    cd music-list
-```
+    ``` bash
+        cd music-list
+    ```
 
-3. Configure the Meson build directory:
+3. Configure the cmake build directory:
+    - Set up build directory
+    
+    ``` bash
+      mkdir cmake-build-debug && cd cmake-build-debug
+    ```
+
    - Basic dev build:
    
    ``` bash
-    meson build
+     cmake ..
    ```
 
-   - Build with tests:
+   - Build without tests:
 
    ``` bash
-    meson build -Denable_tests=true
-   ```
-
-   - Disable building GUI:
-
-   ``` bash
-    meson build -Denable_gui=false
+     cmake build -DENABLE_TESTS=off ..
    ```
 
    - Basic release build:
 
    ``` bash
-    meson build -Dbuildtype=release
+     cmake build -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTS=off ..
    ```
 
 ### Build
 
-1. Run the build using Ninja
+1. Run the build using make
 
    ``` bash
-    ninja -C build
+    cd cmake-build-<build-type> && make -j$(nproc)
    ```
 
-   or 
-
-   ``` bash
-    cd build && ninja
-   ```
-
-   **Note:** Ninja should have automatically been installed with Meson.
-
-2. Locate built executables under `build/src/cli` and `build/src/gui`.
+2. Locate built executables under `src/cli`.
 
 3. ***Optional*** Run tests.
 
    ``` bash
-    ninja test -C build
+    make test
    ```
 
-   or
-
-   ``` bash
-    cd build && ninja test
-   ```
-
-   **Note:** Given that the tests are reliant on copyrighted media, they must be configured exclusively for each test environment. Adjust the search location and expected file count constants in each of the tests to match your environment.
+   **Note:** Given that the tests are reliant on copyrighted media, they must be configured exclusively for each test
+   environment. Adjust the search location and expected file count constants in each of the tests to match your
+   environment.

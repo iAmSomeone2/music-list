@@ -53,7 +53,7 @@ using std::shared_ptr;
 class ImporterTest : public ::testing::Test
 {
 protected:
-    const fs::path RES_DIR = fs::path("../res");
+    const fs::path RES_DIR = fs::path("./res");
     const uint32_t RES_TRACK_NUM = 14U;
 
     const fs::path MUSIC_DIR = fs::path("/home/bdavidson/Music");

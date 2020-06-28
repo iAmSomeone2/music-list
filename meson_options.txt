@@ -1,2 +1,0 @@
-option('enable_tests', type: 'boolean', value: false)
-option('enable_gui', type: 'boolean', value: true)

@@ -30,6 +30,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   
 */
+
 #include <vector>
 #include <memory>
 #include <fstream>
@@ -48,9 +49,9 @@ using namespace MusicList;
 class AlbumTest : public ::testing::Test
 {
 protected:
-    fs::path ALBUM_PATH = fs::path("../res/AM");
-    fs::path SINGLE_TRACK = fs::path("../res/AM/02 R U Mine_.opus");
-    fs::path JETHRO_TULL = fs::path("../res/Original Masters");
+    fs::path ALBUM_PATH = fs::path("./res/AM");
+    fs::path SINGLE_TRACK = fs::path("./res/AM/02 R U Mine_.opus");
+    // fs::path JETHRO_TULL = fs::path("../res/Original Masters");
 };
 
 TEST_F(AlbumTest, SingleFile)
@@ -88,25 +89,6 @@ TEST_F(AlbumTest, FullAlbum)
             {
                 shared_ptr<Track> newTrack = std::make_shared<Track>(Track(item));
                 album.addTrack(newTrack);
-            }
-            catch (const unsupported_format_error &err)
-            {
-                std::cerr << err.what() << std::endl;
-            }
-        }
-    }
-}
-
-TEST_F(AlbumTest, ProblematicAlbum)
-{
-    Album album = Album();
-    for (const auto &item : fs::recursive_directory_iterator(JETHRO_TULL))
-    {
-        if (fs::is_regular_file(item))
-        {
-            try
-            {
-                album.addTrack(std::make_shared<Track>(Track(item)));
             }
             catch (const unsupported_format_error &err)
             {
