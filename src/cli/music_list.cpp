@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "Unkown option `-" << char(optopt) << "`.\n";
+                    std::cerr << "Unknown option `-" << char(optopt) << "`.\n";
                 }
 
                 return EXIT_FAILURE;
