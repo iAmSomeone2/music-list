@@ -12,6 +12,11 @@ option(ENABLE_TESTS "Enable the Google Test framework for the project." on)
 
 include_directories(src/core)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(STATUS "Disabling tests for Release build")
+    set(ENABLE_TESTS off)
+endif()
+
 find_package(JsonCpp REQUIRED)
 
 # add_subdirectory(lib)
