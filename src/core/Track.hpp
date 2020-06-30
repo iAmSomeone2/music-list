@@ -41,6 +41,11 @@
 
 #include <json/value.h>
 
+extern "C"
+{
+#include <sqlite3.h>
+};
+
 namespace fs = std::filesystem;
 
 using std::string;
@@ -48,29 +53,40 @@ using std::map;
 
 namespace MusicList
 {
+    /**
+     * \brief All file extensions that a Track may have.
+     *
+     * \details
+     * An extension in this array allows the file to be recognised by the Track object, but it does not imply that the
+     * Track is capable of processing it. The Track object will throw an exception when it can't read a specific file
+     * structure.
+     */
     static const string SUPPORTED_EXTS[] = {
         ".flac", ".opus", ".ogg", ".oga", ".mp3", ".m4a"
     };
+    /**
+     * \brief Length of SUPPORTED_EXTS array.
+     */
     static const uint_fast8_t NUM_EXTS = 6;
 
-    struct unsupported_format_error : public std::exception
-    {
-        fs::path errPath;
-        unsupported_format_error(const fs::path& filePath)
-        {
-            this->errPath = filePath;
-        }
-        const char* what() const throw()
-        {
-            string outStr = "Unsupported audio format. File: ";
-            outStr.append(errPath.string());
-            const char* cStr = outStr.c_str();
-            return cStr;
-        }
-    };
+//    struct unsupported_format_error : public std::exception
+//    {
+//        fs::path errPath;
+//        explicit unsupported_format_error(const fs::path& filePath)
+//        {
+//            this->errPath = filePath;
+//        }
+//        [[nodiscard]] const char* what() const noexcept override
+//        {
+//            string outStr = "Unsupported audio format. File: ";
+//            outStr.append(errPath.string());
+//            const char* cStr = outStr.c_str();
+//            return cStr;
+//        }
+//    };
 
     /**
-     * Possbile track formats.
+     * \brief Possible track formats.
      */
     enum class AudioFormat : uint_fast8_t
     {
@@ -87,39 +103,40 @@ namespace MusicList
     {
     private:
         // Data info
-        fs::path path;
-        AudioFormat format = AudioFormat();
+        fs::path path; /**< Filesystem path to file associated with this Track */
+        AudioFormat format = AudioFormat(); /**< Codec/container format of Track */
 
         // ==================
         // Metadata Retrieval
         // ==================
 
         /**
-         * Determines which audio format is held within an Ogg container.
+         * \brief Determines which audio format is held within an Ogg container.
          * 
-         * @param path fs path to the track to check
+         * \param path fs path to the track to check
          * 
-         * @returns AudioFormat corresponding to the detected file type.
+         * \returns AudioFormat corresponding to the detected file type.
          */
         static AudioFormat determineOggAudioFormat(const fs::path& path);
 
         /**
-         * @brief Adds the metadata pair to the object.
-         * 
+         * \brief Adds the metadata pair to the object.
+         *
+         * \details
          * Special metadata such as artist name are also assigned to the appropriate instance variables.
          * 
-         * @param key metadata entry key
-         * @param value metadata entry value
+         * \param key metadata entry key
+         * \param value metadata entry value
          */
         void addMetadataPair(const string& key, const string& value);
 
         /**
-         * @brief Handles parsing FLAC metadata into memory.
+         * \brief Handles parsing FLAC metadata into memory.
          */
         void readFlacMetadata();
 
         /**
-         * @brief Handles parsing Opus metadata into memory.
+         * \brief Handles parsing Opus metadata into memory.
          */
         void readOpusMetadata();
     protected:
@@ -140,25 +157,27 @@ namespace MusicList
         
     public:
         /**
-         * @brief Creates a new Track instance where the path is set to "./" by default.
-         * 
+         * \brief Creates a new Track instance where the path is set to "./" by default.
+         *
+         * \details
          * The appropriate path must be set with Track::setPath().
          */
         Track();
 
         /**
-         * @brief Creates a new Track instance using the provided path.
-         * 
+         * \brief Creates a new Track instance using the provided path.
+         *
+         * \details
          * Track metadata is parsed at instance creation and can be immediately accessed.
          * 
-         * @param path filesystem path to the track to use.
+         * \param path filesystem path to the track to use.
          */
         explicit Track(const fs::path& path);
 
         /**
-         * @brief Sets the track search newPath for this Track instance.
+         * \brief Sets the track search newPath for this Track instance.
          * 
-         * @param newPath filesystem newPath to the track to use.
+         * \param newPath filesystem newPath to the track to use.
          */
         void setPath(const fs::path& newPath);
 
@@ -167,18 +186,19 @@ namespace MusicList
         // ==================
 
         /**
-         * @brief Reads the track's metadata into memory.
+         * \brief Reads the track's metadata into memory.
          */
         void readMetadata();
 
         /**
-         * @brief Determines the AudioFormat of the file at the provided path.
-         * 
+         * \brief Determines the AudioFormat of the file at the provided path.
+         *
+         * \details
          * In the event that the file cannot be opened or the format isn't supported, AudioFormat::unknown is returned.
          * 
-         * @param path fs path to the track to check
+         * \param path fs path to the track to check
          * 
-         * @returns AudioFormat corresponding to the detected file type.
+         * \returns AudioFormat corresponding to the detected file type.
          */
         static AudioFormat determineFormat(const fs::path& path);
 
@@ -187,16 +207,16 @@ namespace MusicList
         // ==========
 
         /**
-         * @brief Creates a JSON value containing the object's data.
+         * \brief Creates a JSON value containing the object's data.
          */
-        Json::Value toJSON() const;
+        [[nodiscard]] Json::Value toJSON() const;
 
         /**
-         * @brief Converts the first 4 bytes in the input array into an unsigned 32-bit int.
+         * \brief Converts the first 4 bytes in the input array into an unsigned 32-bit int.
          * 
-         * @param bytes character array containing at least 4 bytes of data.
+         * \param bytes character array containing at least 4 bytes of data.
          * 
-         * @returns unsigned 32-bit int from the first 4 bytes in the input array.
+         * \returns unsigned 32-bit int from the first 4 bytes in the input array.
          */
         static inline uint32_t toUInt32(const char* bytes);
 
@@ -205,68 +225,68 @@ namespace MusicList
         // =======
 
         /**
-         * @returns a const reference to the complete tag map for this Track instance.
+         * \returns a const reference to the complete tag map for this Track instance.
          */
-        const map<string,string>& getTags() const;
+        [[nodiscard]] const map<string,string>& getTags() const;
 
         /**
-         * @returns Track title.
+         * \returns Track title.
          */
-        const string& getTitle() const;
+        [[nodiscard]] [[maybe_unused]] const string& getTitle() const;
 
         /**
-         * @returns Track artist.
+         * \returns Track artist.
          */
-        const string& getArtist() const;
+        [[nodiscard]] [[maybe_unused]] const string& getArtist() const;
 
         /**
-         * @returns Track album.
+         * \returns Track album.
          */
-        const string& getAlbum() const;
+        [[nodiscard]] [[maybe_unused]] const string& getAlbum() const;
 
         /**
-         * @returns Track index in album.
+         * \returns Track index in album.
          */
-        const uint_fast8_t& getTrackNum() const;
+        [[nodiscard]] [[maybe_unused]] const uint_fast8_t& getTrackNum() const;
 
         /**
-         * @returns total number of Tracks in album or collection.
+         * \returns total number of Tracks in album or collection.
          */
-        const uint_fast8_t& getTotalTracks() const;
+        [[nodiscard]] [[maybe_unused]] const uint_fast8_t& getTotalTracks() const;
 
         /**
-         * @returns index of associated disc in collection or album.
+         * \returns index of associated disc in collection or album.
          */
-        const uint_fast8_t& getDiscNum() const;
+        [[nodiscard]] [[maybe_unused]] const uint_fast8_t& getDiscNum() const;
 
         /**
-         * @returns total number of discs in collection or album.
+         * \returns total number of discs in collection or album.
          */
-        const uint_fast8_t& getTotalDiscs() const;
+        [[nodiscard]] [[maybe_unused]] const uint_fast8_t& getTotalDiscs() const;
 
         /**
-         * @returns AudioFormat associated with the Track;
+         * \returns AudioFormat associated with the Track;
          */
-        const AudioFormat& getAudioFormat() const;
+        [[nodiscard]] [[maybe_unused]] const AudioFormat& getAudioFormat() const;
 
         /**
-         * @returns Filesystem path associated with the Track
+         * \returns Filesystem path associated with the Track
          */
-        const fs::path& getPath() const;
+        [[nodiscard]] [[maybe_unused]] const fs::path& getPath() const;
 
-        const string& getMBID() const;
+        [[nodiscard]] [[maybe_unused]] const string& getMBID() const;
 
         // ==================
         // Operator Overloads
         // ==================
 
         /**
-         * @brief Returns true if the left hand side is less than the right hand side.
+         * \brief Returns true if the left hand side is less than the right hand side.
          * 
-         * @param lhs left-hand Track
-         * @param rhs right-hand Track
+         * \param lhs left-hand Track
+         * \param rhs right-hand Track
          * 
-         * @returns true if the left hand side is less than the right hand side.
+         * \returns true if the left hand side is less than the right hand side.
          */
         friend inline bool operator< (const Track& lhs, const Track& rhs)
         {

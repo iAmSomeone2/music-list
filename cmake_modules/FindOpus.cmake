@@ -12,8 +12,11 @@ if(OPUS_INCLUDE_DIR)
     set(OPUS_FIND_QUIETLY TRUE)
 endif(OPUS_INCLUDE_DIR)
 
-find_package(Ogg)
-if(OGG_FOUND)
+find_package (PkgConfig QUIET)
+pkg_check_modules(PC_OGG QUIET ogg)
+
+# find_package(Ogg)
+if(PC_OGG_FOUND)
         find_path(OPUS_INCLUDE_DIR opusfile.h PATH_SUFFIXES opus)
         # MSVC built opus may be named opus_static
 	# The provided project files name the library with the lib prefix.
@@ -27,7 +30,7 @@ if(OGG_FOUND)
         find_package_handle_standard_args(OPUS DEFAULT_MSG
             OPUS_INCLUDE_DIR
             OPUS_LIBRARY OPUSFILE_LIBRARY)
-endif(OGG_FOUND)
+endif(PC_OGG_FOUND)
 
 if(OPUS_FOUND)
   set(OPUS_LIBRARIES ${OPUSFILE_LIBRARY} ${OPUS_LIBRARY}

@@ -64,7 +64,7 @@ Track::Track(const fs::path &path)
         this->setPath(path);
         this->readMetadata();
     }
-    catch (const unsupported_format_error &e)
+    catch (const std::runtime_error &e)
     {
         std::cerr << e.what() << '\n';
     }
@@ -77,7 +77,7 @@ void Track::setPath(const fs::path &newPath)
     {
         this->format = Track::determineFormat(this->path);
     }
-    catch (const unsupported_format_error &err)
+    catch (const std::runtime_error &err)
     {
         throw err;
     }
@@ -142,7 +142,7 @@ AudioFormat Track::determineFormat(const fs::path &path)
 
     AudioFormat format = AudioFormat::unknown;
 
-    unique_ptr<char> buff = std::make_unique<char>();
+    char* buff = new char[5];
 
     if (fileExt == ".flac")
     {
@@ -151,15 +151,15 @@ AudioFormat Track::determineFormat(const fs::path &path)
         if (!trackFile.is_open())
         {
             errStr << "Failed to open file to determine audio format: " << path.string() << ".";
+            delete [] buff;
             throw std::runtime_error(errStr.str());
         }
 
         // Check for flac audio data.
-        buff.reset(new char[5]);
-        buff.get()[4] = 0;
+        buff[4] = 0;
 
-        trackFile.readsome(buff.get(), 4);
-        if (strncmp(buff.get(), "fLaC", 4) == 0)
+        trackFile.readsome(buff, 4);
+        if (strncmp(buff, "fLaC", 4) == 0)
         {
             format = AudioFormat::flac;
         }
@@ -171,6 +171,7 @@ AudioFormat Track::determineFormat(const fs::path &path)
         format = Track::determineOggAudioFormat(path);
     }
 
+    delete [] buff;
     return format;
 }
 
@@ -180,6 +181,8 @@ AudioFormat Track::determineFormat(const fs::path &path)
 
 void Track::readMetadata()
 {
+    std::ostringstream  errStr;
+
     switch (this->format)
     {
     case AudioFormat::flac:
@@ -197,7 +200,8 @@ void Track::readMetadata()
         }
         break;
     default:
-        throw unsupported_format_error(this->path);
+        errStr << "Unknown audio format type: " << this->path;
+        throw std::runtime_error(errStr.str());
     }
 }
 
@@ -260,6 +264,10 @@ void Track::readFlacMetadata()
         this->addMetadataPair(key, value);
     }
 
+    /*
+     * The FLAC lib has about a 12k/object memory leak that occurs when running FLAC__metadata_object_delete. Nothing
+     * can be done about it on this end.
+     */
     FLAC__metadata_object_delete(streamMetadata);
 
     this->artist = this->tags["ALBUMARTIST"];

@@ -31,17 +31,22 @@
   
 */
 
+extern "C"
+{
 #include <unistd.h>
+#include <pwd.h>
+}
+
 #include <filesystem>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
+
+#include <json/writer.h>
 
 #include <Importer.hpp>
 
-#include <json/value.h>
-#include <json/writer.h>
+#include <config.hpp>
 
 namespace fs = std::filesystem;
 
@@ -50,12 +55,12 @@ using std::string;
 static const char DEFAULT_OUT_PATH[] = "./musiclist.json";
 
 /**
- * @brief Confirms that the supplied path points to a directory.
+ * \brief Confirms that the supplied path points to a directory.
  * 
- * If the supplied path is not a directory than the parent of the supplied path will
+ * \details If the supplied path is not a directory than the parent of the supplied path will
  * be used.
  * 
- * @param searchDir path to verify.
+ * \param searchDir path to verify.
  */
 void verifySearchDir(fs::path& searchDir)
 {
@@ -66,12 +71,13 @@ void verifySearchDir(fs::path& searchDir)
 }
 
 /**
- * @brief Confirms that the supplied path is not a directory and has the appropriate extension.
- * 
+ * \brief Confirms that the supplied path is not a directory and has the appropriate extension.
+ *
+ * \details
  * If the supplied path is a directory, then the default out file name will be appended to it.
  * If the supplied path does not use the proper (.json) extension, then it will be fixed.
  * 
- * @param outFile path to verify
+ * \param outFile path to verify
  */
 void verifyOutFile(fs::path& outFile)
 {
@@ -90,24 +96,68 @@ void verifyOutFile(fs::path& outFile)
     }
 }
 
+/**
+ * \brief Prints help text to stdout.
+ */
 void printHelp()
 {
-    std::cout << "MusicList CLI\n" << std::endl;;
+    std::cout << PROJECT_NAME << " " << PROJECT_VERSION << "\n\n";
 
-    std::cout << "Option: -i (Input directory)\n  Sets directory to search for audio files.\n  Usage: 'musiclist -i ~/Music'\n";
-    std::cout << std::endl;
+    std::cout << "Option: -i (Input directory)\n"
+                 "  Sets directory to search for audio files.\n"
+                 "  Usage: 'musiclist -i ~/Music'\n\n";
 
-    std::cout << "Option: -o (Output file)\n  Sets the file to output the search results to.\n  Usage: 'musiclist -o ~/Documents/musiclist.json'\n";
-    std::cout << std::endl;
+    std::cout << "Option: -o (Output file)\n"
+                 "  Sets the file to output the search results to.\n"
+                 "  Usage: 'musiclist -o ~/Documents/musiclist.json'\n\n";
 
-    std::cout << "Option: -l (Limit)\n  Sets the maximum number of files to process.\n  Usage: 'musiclist -l 100'\n";
-    std::cout << std::endl;
+    std::cout << "Option: -l (Limit)\n"
+                 "  Sets the maximum number of files to process.\n"
+                 "  Usage: 'musiclist -l 100'\n\n";
 
-    std::cout << "Option -h (Help)\n  Prints this message and exits." << std::endl;
+    std::cout << "Option -h (Help)\n"
+                 "  Prints this message and exits.\n\n";
+}
+
+/**
+ * \brief Uses environment variables to get current user's app data directory
+ * \return path to user's app data directory
+ */
+fs::path getUserDataDir()
+{
+    bool xdgFound = false;
+    char *homeDataDir = getenv("XDG_DATA_HOME");
+    if (homeDataDir == nullptr)
+    {
+        homeDataDir = getenv("HOME");
+        if (homeDataDir == nullptr)
+        {
+            homeDataDir = getpwuid(getuid())->pw_dir;
+        }
+    }
+    else
+    {
+        xdgFound = true;
+    }
+
+    fs::path dataPath = fs::path(homeDataDir);
+
+    if (!xdgFound)
+    {
+        // Append the user data dir to the user's HOME path
+        dataPath = dataPath.append(".local/share/");
+    }
+
+    dataPath = dataPath.append(PROJECT_NAME);
+
+    return dataPath;
 }
 
 int main(int argc, char* argv[])
 {
+    // Determine user's home dir.
+    const fs::path userDataDir = getUserDataDir();
+
     // User input handling.
     char* searchPath = nullptr;
     char* outPath = nullptr;

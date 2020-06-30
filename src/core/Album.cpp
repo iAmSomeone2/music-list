@@ -31,6 +31,8 @@
   
 */
 
+#include <stdexcept>
+
 #include "Album.hpp"
 
 using namespace MusicList;
@@ -61,9 +63,12 @@ Json::Value Album::toJSON() const
 
 void Album::addTrack(const shared_ptr<Track>& track)
 {
+    std::ostringstream errStr;
+
     if (track->getAudioFormat() == AudioFormat::unknown)
     {
-        throw unsupported_format_error(track->getPath());
+        errStr << "Unsupported audio format: " << track->getPath();
+        throw std::runtime_error(errStr.str());
     }
 
     if (this->tracks.empty())

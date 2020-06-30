@@ -9,7 +9,7 @@ list(APPEND MUSIC_DATA_SRCS
 find_package(FLAC REQUIRED)
 find_package(Opus REQUIRED)
 
-add_library(musicdata STATIC ${MUSIC_DATA_SRCS})
+add_library(musicdata STATIC ${MUSIC_DATA_SRCS} ../config.hpp.in)
 
 target_include_directories(musicdata PRIVATE ${OPUS_INCLUDE_DIR} ${FLAC_INCLUDE_DIRS})
 

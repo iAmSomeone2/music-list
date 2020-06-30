@@ -11,10 +11,11 @@ if (FLAC_INCLUDE_DIR)
     set (FLAC_FIND_QUIETLY TRUE)
 endif ()
 
-find_package (Ogg QUIET)
+# find_package (Ogg QUIET)
 
 find_package (PkgConfig QUIET)
 pkg_check_modules(PC_FLAC QUIET flac)
+pkg_check_modules(PC_OGG QUIET ogg)
 
 set(FLAC_VERSION ${PC_FLAC_VERSION})
 
@@ -46,7 +47,7 @@ find_package_handle_standard_args (FLAC
 	REQUIRED_VARS
 		FLAC_LIBRARY
 		FLAC_INCLUDE_DIR
-		OGG_FOUND
+		PC_OGG_FOUND
 	VERSION_VAR
         FLAC_VERSION
 	)

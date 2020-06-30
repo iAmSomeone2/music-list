@@ -70,21 +70,21 @@ namespace MusicList
         /**
          * @brief Creates a JSON value containing the object's data.
          */
-        Json::Value toJSON() const;
+        [[nodiscard]] Json::Value toJSON() const;
 
         // =======
         // Getters
         // =======
 
-        const string& getName() const;
+        [[nodiscard]] [[maybe_unused]] const string& getName() const;
 
-        const string& getArtist() const;
+        [[nodiscard]] [[maybe_unused]] const string& getArtist() const;
 
-        const map<string,shared_ptr<Track>>& getTrackSet() const;
+        [[nodiscard]] [[maybe_unused]] const map<string,shared_ptr<Track>>& getTrackSet() const;
 
-        const uint_fast8_t& getTotalTracks() const;
+        [[nodiscard]] [[maybe_unused]] const uint_fast8_t& getTotalTracks() const;
 
-        const string& getMBID() const;
+        [[nodiscard]] [[maybe_unused]] const string& getMBID() const;
 
         // ==================
         // Operator Overloads

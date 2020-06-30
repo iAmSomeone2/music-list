@@ -64,14 +64,14 @@ namespace MusicList
         Importer();
 
         /**
-         * @brief Performs a search and import for supported files in the specified directory.
+         * \brief Performs a search and import for supported files in the specified directory.
          * 
-         * @param path directory to import from
+         * \param path directory to import from
          */
         void runTrackSearch(const fs::path& path, const uint32_t& limit);
 
         /**
-         * @brief Organizes tracks into their respective albums.
+         * \brief Organizes tracks into their respective albums.
          * 
          * Running this method after generating a track list allows the user to export the
          * data using the toJSON() method.
@@ -79,21 +79,21 @@ namespace MusicList
         void generateAlbumsFromTracks();
 
         /**
-         * @brief Generates a Json Value containing an array with all imported albums.
+         * \brief Generates a Json Value containing an array with all imported albums.
          * 
-         * @returns Json::Value containing albums array
+         * \returns Json::Value containing albums array
          */
-        Json::Value toJSON() const;
+        [[nodiscard]] [[maybe_unused]] Json::Value toJSON() const;
 
         /**
-         * @returns a reference to the tracks vector.
+         * \returns a reference to the tracks vector.
          */
-        const vector<shared_ptr<Track>>& getTracks() const;
+        [[nodiscard]] [[maybe_unused]] const vector<shared_ptr<Track>>& getTracks() const;
 
         /**
-         * @returns a reference to the albums map.
+         * \returns a reference to the albums map.
          */
-        const map<string,shared_ptr<Album>>& getAlbums() const;
+        [[nodiscard]] [[maybe_unused]] const map<string,shared_ptr<Album>>& getAlbums() const;
     };
 } // namespace MusicList
 

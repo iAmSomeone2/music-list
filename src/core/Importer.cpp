@@ -39,6 +39,7 @@ Importer::Importer() = default;
 
 void Importer::runTrackSearch(const fs::path& path, const uint32_t& limit)
 {
+    std::cout << "Checking '" << path.string() << "' for audio files...\n";
     vector<fs::path> trackPaths;
     for (const auto& item : fs::recursive_directory_iterator(path))
     {
@@ -100,9 +101,12 @@ void Importer::runTrackSearch(const fs::path& path, const uint32_t& limit)
             std::cerr << e.what() << '\n';
             continue;
         }
-        
+
+        // Track should be added to sqlite DB at this point.
+
         this->tracks.push_back(trackPtr);
-        std::cout << "\33[2K\rImported " << std::to_string(this->tracks.size()) << " of " << std::to_string(totalTracks) << std::flush;
+        std::cout << "\33[2K\rImported " << std::to_string(this->tracks.size()) << " of "
+            << std::to_string(totalTracks) << std::flush;
     }
     std::cout << std::endl;
 }
