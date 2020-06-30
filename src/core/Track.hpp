@@ -191,6 +191,13 @@ namespace MusicList
         void readMetadata();
 
         /**
+         * \brief Saves this Track's data to the supplied SQLite database.
+         *
+         * \param dbConnection pointer to sqlite3 struct.
+         */
+        void saveToDB(const sqlite3* dbConnection);
+
+        /**
          * \brief Determines the AudioFormat of the file at the provided path.
          *
          * \details

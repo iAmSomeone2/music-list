@@ -354,6 +354,13 @@ Json::Value Track::toJSON() const
     return root;
 }
 
+void Track::saveToDB(const sqlite3 *dbConnection)
+{
+    int sqlExecResult = SQLITE_OK;
+    // Check to see if track already exists.
+    std::string findExisting = "SELECT * FROM track WHERE ?0 == ";
+}
+
 inline uint32_t Track::toUInt32(const char *bytes)
 {
     return (bytes[3] << 24) | (bytes[2] << 16) | (bytes[1] << 8) | bytes[0];
