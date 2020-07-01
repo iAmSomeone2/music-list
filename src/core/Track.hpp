@@ -195,7 +195,7 @@ namespace MusicList
          *
          * \param dbConnection pointer to sqlite3 struct.
          */
-        void saveToDB(const sqlite3* dbConnection);
+        void saveToDB(sqlite3 *dbConnection);
 
         /**
          * \brief Determines the AudioFormat of the file at the provided path.

@@ -354,11 +354,19 @@ Json::Value Track::toJSON() const
     return root;
 }
 
-void Track::saveToDB(const sqlite3 *dbConnection)
+void Track::saveToDB(sqlite3 *dbConnection)
 {
+    std::ostringstream errStr;
+
     int sqlExecResult = SQLITE_OK;
+    sqlite3_stmt* sqlStmt;
     // Check to see if track already exists.
-    std::string findExisting = "SELECT * FROM track WHERE ?0 == ";
+    std::string findExisting = "SELECT * FROM track WHERE path == ?;";
+    sqlite3_prepare_v2(dbConnection, findExisting.c_str(), findExisting.size(), &sqlStmt, nullptr);
+    sqlite3_bind_text(sqlStmt, 1, this->path.c_str(), this->path.string().size(), SQLITE_TRANSIENT);
+    sqlExecResult = sqlite3_step(sqlStmt);
+    // Run statement and get data if it returns. In the event that it does, compare it with the current Track.
+    // Don't forget to finalize the statement when done.
 }
 
 inline uint32_t Track::toUInt32(const char *bytes)
