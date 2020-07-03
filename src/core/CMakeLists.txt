@@ -18,4 +18,5 @@ target_link_libraries(musicdata
     ${OPUS_LIBRARY}
     ${OPUSFILE_LIBRARY}
     ${JsonCpp_LIBRARIES}
+    ${SQLite3_LIBRARIES}
 )

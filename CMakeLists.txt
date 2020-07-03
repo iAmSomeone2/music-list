@@ -30,6 +30,6 @@ if(ENABLE_TESTS)
         enable_testing()
         add_subdirectory(test)
 
-        file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_BINARY_DIR}/test/)
+        file(COPY ${CMAKE_SOURCE_DIR}/test/res DESTINATION ${CMAKE_BINARY_DIR}/test/)
     endif()
 endif()

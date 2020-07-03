@@ -12,5 +12,5 @@ cmake-build-*/
 *.opus
 
 # Resource files
-res/**/*
-!res/**/README.md
+test/res/**/*
+!test/res/**/README.md
