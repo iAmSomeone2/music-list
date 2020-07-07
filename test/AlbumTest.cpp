@@ -90,7 +90,7 @@ TEST_F(AlbumTest, FullAlbum)
                 shared_ptr<Track> newTrack = std::make_shared<Track>(Track(item));
                 album.addTrack(newTrack);
             }
-            catch (const unsupported_format_error &err)
+            catch (const std::runtime_error &err)
             {
                 std::cerr << err.what() << std::endl;
             }
@@ -110,7 +110,7 @@ TEST_F(AlbumTest, GenerateJSON)
                 shared_ptr<Track> newTrack = std::make_shared<Track>(Track(item));
                 album.addTrack(newTrack);
             }
-            catch (const unsupported_format_error &err)
+            catch (const std::runtime_error &err)
             {
                 std::cerr << err.what() << std::endl;
             }

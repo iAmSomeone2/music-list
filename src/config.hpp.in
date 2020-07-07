@@ -36,6 +36,8 @@
 
 #cmakedefine PROJECT_NAME       "@PROJECT_NAME@"
 #cmakedefine PROJECT_VERSION    "@PROJECT_VERSION@"
-#cmakedefine BUILD_TYPE         "@CMAKE_BUILD_TYPE@"
+#cmakedefine RELEASE_BUILD
+#cmakedefine DATA_DIR           "@DATA_DIR@"
+
 
 #endif //MUSIC_LIST_CONFIG_HPP

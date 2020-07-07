@@ -1,5 +1,0 @@
-BEGIN TRANSACTION;
-CREATE TABLE artist(
-    id      INTEGER  NOT NULL PRIMARY KEY,
-    
-);

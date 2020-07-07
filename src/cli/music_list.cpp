@@ -34,7 +34,6 @@
 extern "C"
 {
 #include <unistd.h>
-#include <pwd.h>
 }
 
 #include <filesystem>
@@ -119,45 +118,8 @@ void printHelp()
                  "  Prints this message and exits.\n\n";
 }
 
-/**
- * \brief Uses environment variables to get current user's app data directory
- * \return path to user's app data directory
- */
-fs::path getUserDataDir()
-{
-    bool xdgFound = false;
-    char *homeDataDir = getenv("XDG_DATA_HOME");
-    if (homeDataDir == nullptr)
-    {
-        homeDataDir = getenv("HOME");
-        if (homeDataDir == nullptr)
-        {
-            homeDataDir = getpwuid(getuid())->pw_dir;
-        }
-    }
-    else
-    {
-        xdgFound = true;
-    }
-
-    fs::path dataPath = fs::path(homeDataDir);
-
-    if (!xdgFound)
-    {
-        // Append the user data dir to the user's HOME path
-        dataPath = dataPath.append(".local/share/");
-    }
-
-    dataPath = dataPath.append(PROJECT_NAME);
-
-    return dataPath;
-}
-
 int main(int argc, char* argv[])
 {
-    // Determine user's home dir.
-    const fs::path userDataDir = getUserDataDir();
-
     // User input handling.
     char* searchPath = nullptr;
     char* outPath = nullptr;

@@ -66,7 +66,7 @@ Track::Track(const fs::path &path)
     }
     catch (const std::runtime_error &e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << "\n" << e.what() << '\n';
     }
 }
 
@@ -242,7 +242,8 @@ void Track::addMetadataPair(const string &key, const string &value)
 
 void Track::readFlacMetadata()
 {
-    FLAC__StreamMetadata *streamMetadata = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+    //FLAC__StreamMetadata *streamMetadata = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+    FLAC__StreamMetadata* streamMetadata = nullptr;
 
     bool success = static_cast<bool>(FLAC__metadata_get_tags(this->path.c_str(), &streamMetadata));
 

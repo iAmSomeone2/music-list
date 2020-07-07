@@ -42,6 +42,7 @@
 
 #include <json/value.h>
 #include <json/writer.h>
+#include <sqlite3.h>
 
 #include "Track.hpp"
 #include "Album.hpp"
@@ -55,13 +56,29 @@ namespace fs = std::filesystem;
 
 namespace MusicList
 {
+    static const char DB_NAME[] = "mellophone_library.sqlite";
+
     class Importer
     {
     private:
+        sqlite3* dbConnection;
+        fs::path userDataDir;
+
         map<string,shared_ptr<Album>> albums;
         vector<shared_ptr<Track>> tracks;
+
+    protected:
+        /**
+         * \brief Uses environment variables to get current user's app data directory
+         * \return path to user's app data directory
+         */
+        static fs::path getUserDataDir();
+
+        void initDB();
     public:
         Importer();
+
+        ~Importer();
 
         /**
          * \brief Performs a search and import for supported files in the specified directory.
