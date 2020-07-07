@@ -74,10 +74,23 @@ namespace MusicList
          */
         static fs::path getUserDataDir();
 
+        /**
+         * \brief Sets up the database in the event that one or all of the tables are missing.
+         */
         void initDB();
     public:
+        /**
+         * \brief Creates a new Importer instance
+         *
+         * \details
+         * Upon creation, the Importer instance locates a preexisting SQLite DB in the program's user-specific data dir
+         * or creates a new SQLite DB in that location if one is not found.
+         */
         Importer();
 
+        /**
+         * \brief Releases connection to SQLite DB on destruction.
+         */
         ~Importer();
 
         /**

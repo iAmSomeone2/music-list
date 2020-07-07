@@ -71,6 +71,7 @@ void Album::addTrack(const shared_ptr<Track>& track)
         throw std::runtime_error(errStr.str());
     }
 
+    // Consider grabbing the album artwork when reading in the first track.
     if (this->tracks.empty())
     {
         // Initialize basic data since this is the first track to be added.

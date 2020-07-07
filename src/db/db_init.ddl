@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS album(
 );
 CREATE TABLE IF NOT EXISTS track(
     track_id        INTEGER NOT NULL PRIMARY KEY,
+    track_path      TEXT    NOT NULL,
     track_title     TEXT    NOT NULL,
     track_album     INTEGER REFERENCES album(album_id) ON UPDATE CASCADE ON DELETE SET NULL,
     track_artist    INTEGER REFERENCES artist(artist_id) ON UPDATE CASCADE ON DELETE SET NULL,
