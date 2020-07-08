@@ -23,7 +23,7 @@ else()
     set(DATA_DIR ${CMAKE_BINARY_DIR}/src/)
 endif()
 
-find_package(SQLite3 REQUIRED)
+find_package(SQLite3 3.24.0 REQUIRED)
 find_package(JsonCpp REQUIRED)
 
 configure_file(src/config.hpp.in src/config.hpp @ONLY)

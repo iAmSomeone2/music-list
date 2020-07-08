@@ -200,7 +200,7 @@ void Track::readMetadata()
         }
         break;
     default:
-        errStr << "Unknown audio format type: " << this->path;
+        errStr << "\nUnknown audio format type: " << this->path;
         throw std::runtime_error(errStr.str());
     }
 }
@@ -361,17 +361,30 @@ void Track::saveToDB(sqlite3 *dbConnection, const int &albumId, const int &artis
 
     int res = SQLITE_OK;
     sqlite3_stmt* sqlStmt;
-    // Check to see if track already exists.
-    std::string findExisting = "SELECT * FROM track WHERE path == ?;";
-    sqlite3_prepare_v2(dbConnection, findExisting.c_str(), findExisting.size(), &sqlStmt, nullptr);
+
+    // Insert Track into DB
+    const char insertTrack[] = "INSERT INTO track ("
+                               "track_path, track_title, track_album, track_artist, track_mbid, disc_num, track_num"
+                               ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT(track_path)"
+                               "DO UPDATE SET track_path=excluded.track_path;";
+
+    sqlite3_prepare_v2(dbConnection, insertTrack, -1, &sqlStmt, nullptr);
     sqlite3_bind_text(sqlStmt, 1, this->path.c_str(), this->path.string().size(), SQLITE_TRANSIENT);
-    // Run statement and get data if it returns. In the event that it does, compare it with the current Track.
-    // Don't forget to finalize the statement when done.
+    sqlite3_bind_text(sqlStmt, 2, this->title.c_str(), this->title.size(), SQLITE_TRANSIENT);
+    sqlite3_bind_int(sqlStmt, 3, albumId);
+    sqlite3_bind_int(sqlStmt, 4, artistId);
+    sqlite3_bind_text(sqlStmt, 5, this->mbid.c_str(), this->mbid.size(), SQLITE_TRANSIENT);
+    sqlite3_bind_int(sqlStmt, 6, this->discNum);
+    sqlite3_bind_int(sqlStmt, 7, this->trackNum);
+
     res = sqlite3_step(sqlStmt);
     if (res != SQLITE_DONE)
     {
-        // An instance of the track already exists.
+        sqlite3_finalize(sqlStmt);
+        throw std::runtime_error("Failed to insert track into database.");
     }
+
+    sqlite3_finalize(sqlStmt);
 }
 
 // =======

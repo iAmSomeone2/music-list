@@ -88,6 +88,11 @@ void Album::addTrack(const shared_ptr<Track>& track)
     }
 }
 
+void Album::addToDB(sqlite3 *dbConnection)
+{
+    
+}
+
 // =======
 // Getters
 // =======

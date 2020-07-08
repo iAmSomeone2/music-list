@@ -67,6 +67,9 @@ namespace MusicList
          */
         void addTrack(const shared_ptr<Track>& track);
 
+
+        void addToDB(sqlite3* dbConnection);
+
         /**
          * @brief Creates a JSON value containing the object's data.
          */
