@@ -365,10 +365,9 @@ void Track::saveToDB(sqlite3 *dbConnection, const int &albumId, const int &artis
     // Insert Track into DB
     const char insertTrack[] = "INSERT INTO track ("
                                "track_path, track_title, track_album, track_artist, track_mbid, disc_num, track_num"
-                               ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT(track_path)"
-                               "DO UPDATE SET track_path=excluded.track_path;";
+                               ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)";
 
-    sqlite3_prepare_v2(dbConnection, insertTrack, -1, &sqlStmt, nullptr);
+    sqlite3_prepare_v2(dbConnection, insertTrack, 209, &sqlStmt, nullptr);
     sqlite3_bind_text(sqlStmt, 1, this->path.c_str(), this->path.string().size(), SQLITE_TRANSIENT);
     sqlite3_bind_text(sqlStmt, 2, this->title.c_str(), this->title.size(), SQLITE_TRANSIENT);
     sqlite3_bind_int(sqlStmt, 3, albumId);
@@ -378,13 +377,13 @@ void Track::saveToDB(sqlite3 *dbConnection, const int &albumId, const int &artis
     sqlite3_bind_int(sqlStmt, 7, this->trackNum);
 
     res = sqlite3_step(sqlStmt);
+    sqlite3_finalize(sqlStmt);
     if (res != SQLITE_DONE)
     {
-        sqlite3_finalize(sqlStmt);
-        throw std::runtime_error("Failed to insert track into database.");
+        errStr << "Failed to insert track '" << this->path.string()
+            << "' into database. SQLite error: " << std::to_string(res);
+        throw std::runtime_error(errStr.str());
     }
-
-    sqlite3_finalize(sqlStmt);
 }
 
 // =======

@@ -118,6 +118,32 @@ void printHelp()
                  "  Prints this message and exits.\n\n";
 }
 
+[[maybe_unused]] void exportJSON(MusicList::Importer& importer, const fs::path& outFile)
+{
+    // Export to JSON file
+    std::cout << "Exporting data to '" << outFile.string() << "'.\n";
+
+    const auto& outJson = importer.toJSON();
+
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "  ";
+
+    std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+
+    std::ostringstream outStr;
+
+    writer->write(outJson, &outStr);
+    outStr << std::endl;
+
+    std::ofstream outStream = std::ofstream(outFile, std::ios::out | std::ios::trunc);
+    if (outStream.is_open())
+    {
+        outStream.write(outStr.str().c_str(), outStr.str().length());
+        outStream.close();
+    }
+}
+
 int main(int argc, char* argv[])
 {
     // User input handling.
@@ -174,28 +200,7 @@ int main(int argc, char* argv[])
     importer.runTrackSearch(inDir, limit);
     importer.generateAlbumsFromTracks();
 
-    // Export to JSON file
-    std::cout << "Exporting data to '" << outFile.string() << "'.\n";
-
-    const auto& outJson = importer.toJSON();
-
-    Json::StreamWriterBuilder builder;
-    builder["commentStyle"] = "None";
-    builder["indentation"] = "  ";
-
-    std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
-
-    std::ostringstream outStr;
-
-    writer->write(outJson, &outStr);
-    outStr << std::endl;
-
-    std::ofstream outStream = std::ofstream(outFile, std::ios::out | std::ios::trunc);
-    if (outStream.is_open())
-    {
-        outStream.write(outStr.str().c_str(), outStr.str().length());
-        outStream.close();
-    }
+    importer.updateDB();
 
     std::cout << "done\n";
 

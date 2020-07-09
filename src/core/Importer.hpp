@@ -109,6 +109,11 @@ namespace MusicList
         void generateAlbumsFromTracks();
 
         /**
+         * \brief Updates the SQLite DB with the current map of albums.
+         */
+        void updateDB();
+
+        /**
          * \brief Generates a Json Value containing an array with all imported albums.
          * 
          * \returns Json::Value containing albums array

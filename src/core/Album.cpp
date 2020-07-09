@@ -76,6 +76,7 @@ void Album::addTrack(const shared_ptr<Track>& track)
     {
         // Initialize basic data since this is the first track to be added.
         this->totalTracks = track->getTotalTracks();
+        this->totalDiscs = track->getTotalDiscs();
         this->name = track->getAlbum();
         this->artist = track->getArtist();
         map<string,string> trackTags = track->getTags();
@@ -90,6 +91,31 @@ void Album::addTrack(const shared_ptr<Track>& track)
 
 void Album::addToDB(sqlite3 *dbConnection)
 {
+    std::ostringstream errStr;
+
+    sqlite3_stmt* sqlStmt;
+    int res = SQLITE_OK;
+
+    // Add album to DB if it doesn't already exist.
+    const char insertAlbum[] = "INSERT INTO album ("
+                               "album_name, album_mbid, num_discs, num_tracks"
+                               ") VALUES (?, ?, ?, ?)";
+
+    sqlite3_prepare_v2(dbConnection, insertAlbum, 159, &sqlStmt, nullptr);
+    sqlite3_bind_text(sqlStmt, 1, this->name.c_str(), this->name.size(), SQLITE_TRANSIENT);
+    sqlite3_bind_text(sqlStmt, 2, this->mbid.c_str(), this->mbid.size(), SQLITE_TRANSIENT);
+    sqlite3_bind_int(sqlStmt, 3, this->totalDiscs);
+    sqlite3_bind_int(sqlStmt, 4, this->totalTracks);
+
+    res = sqlite3_step(sqlStmt);
+    sqlite3_finalize(sqlStmt);
+    if (res != SQLITE_DONE)
+    {
+        errStr << "Failed to insert album '" << this->name
+               << "' into database. SQLite error: " << std::to_string(res);
+        throw std::runtime_error(errStr.str());
+    }
+
     
 }
 

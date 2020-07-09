@@ -251,6 +251,14 @@ void Importer::generateAlbumsFromTracks()
     std::cout << std::endl;
 }
 
+void Importer::updateDB()
+{
+    for (const auto& albumPair : this->albums)
+    {
+        albumPair.second->addToDB(this->dbConnection);
+    }
+}
+
 Json::Value Importer::toJSON() const
 {
     Json::Value root;

@@ -55,25 +55,29 @@ namespace MusicList
         string mbid = "";
         map<string,shared_ptr<Track>> tracks = map<string,shared_ptr<Track>>();
         uint_fast8_t totalTracks = 0;
+        uint_fast8_t totalDiscs = 0;
     public:
         Album();
 
         explicit Album(const shared_ptr<Track>& track);
 
         /**
-         * @brief Adds a new track to the Album.
+         * \brief Adds a new track to the Album.
          * 
-         * @param track Track object to add to the Album.
+         * \param track Track object to add to the Album.
          */
         void addTrack(const shared_ptr<Track>& track);
 
-
+        /**
+         * \brief Adds the album, the album's artist, and all of its tracks to the database.
+         * \param dbConnection connection to SQLite3 DB.
+         */
         void addToDB(sqlite3* dbConnection);
 
         /**
-         * @brief Creates a JSON value containing the object's data.
+         * \brief Creates a JSON value containing the object's data.
          */
-        [[nodiscard]] Json::Value toJSON() const;
+        [[nodiscard]] [[maybe_unused]] Json::Value toJSON() const;
 
         // =======
         // Getters
